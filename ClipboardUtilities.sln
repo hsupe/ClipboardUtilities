@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.779
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipboardUtilities", "ClipboardUtilities\ClipboardUtilities.csproj", "{95414B4F-4F03-4CAF-8568-86DB8FDF363B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipboardUtilities.Lib", "ClipboardUtilities.Lib\ClipboardUtilities.Lib.csproj", "{3969C2B9-2E2C-43C8-8FF7-FF16FB434327}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipboardUtilities.Lib.Tests", "ClipboardUtilities.Lib.Tests\ClipboardUtilities.Lib.Tests.csproj", "{31EBF1CF-D582-4E21-B428-C888BE1360C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{95414B4F-4F03-4CAF-8568-86DB8FDF363B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{95414B4F-4F03-4CAF-8568-86DB8FDF363B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{95414B4F-4F03-4CAF-8568-86DB8FDF363B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{95414B4F-4F03-4CAF-8568-86DB8FDF363B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3969C2B9-2E2C-43C8-8FF7-FF16FB434327}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3969C2B9-2E2C-43C8-8FF7-FF16FB434327}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3969C2B9-2E2C-43C8-8FF7-FF16FB434327}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3969C2B9-2E2C-43C8-8FF7-FF16FB434327}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31EBF1CF-D582-4E21-B428-C888BE1360C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31EBF1CF-D582-4E21-B428-C888BE1360C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31EBF1CF-D582-4E21-B428-C888BE1360C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31EBF1CF-D582-4E21-B428-C888BE1360C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
