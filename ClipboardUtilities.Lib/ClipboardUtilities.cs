@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
-using System.Net.Sockets;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text.RegularExpressions;
-using DotNetIpAddress = System.Net.IPAddress;
 
 
 namespace ClipboardUtilities.Lib
@@ -23,31 +20,8 @@ namespace ClipboardUtilities.Lib
 		string IpAddressToHexNumber(string input);
 		string HexToIpAddress(string input);
 		string ApplyPattern(string input);
-	}
-
-	internal static class ExtensionMethods
-	{
-		public static string[] SplitInputIntoLines(this string input)
-		{
-			return input.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-		}
-
-		public static string ToMultiLineString<T>(this IEnumerable<T> lines)
-		{
-			return JoinIntoString(lines, Environment.NewLine);
-		}
-
-		public static string JoinIntoString<T>(this IEnumerable<T> lines, string separator)
-		{
-			return string.Join(separator, lines);
-		}
-
-		public static string SurroundWith(this string input, string begin, string end)
-		{
-			return JoinIntoString(
-				new List<string>() { begin, input, end}, 
-				" ");
-		}
+		string ExtractPattern(string input);
+		string LogDateToSplunkDate(string logDate);
 	}
 
 	public class ClipboardUtilities : IClipboardUtilities
@@ -96,11 +70,12 @@ namespace ClipboardUtilities.Lib
 
 		public string ToSqlInList(string input, bool includeValuesInQuotes = false)
 		{
-			return input.SplitInputIntoLines()
-				.Select(x => includeValuesInQuotes ? $"'{x}'," : $"{x},")
-				.JoinIntoString(" ")
+			string pattern = includeValuesInQuotes ? "'$$VAL$$'," : "$$VAL$$,";
+			input = pattern + Environment.NewLine + input;
+			return ApplyPattern(input)
 				.TrimEnd(',')
-				.SurroundWith("(", ")");
+				.SurroundWith("(", ")")
+				.ToSingleLine();
 		}
 
 		public string ToSqlInListQuoted(string input)
@@ -124,71 +99,72 @@ namespace ClipboardUtilities.Lib
 
 		public string ApplyPattern(string input)
 		{
-			//input = input.Remove(0, input.IndexOf(System.Environment.NewLine));
-			//return Converter(
-			//	input,
-			//	x => pattern.Replace("$$VAL$$", x)
-			//);
-			return input;
+			IEnumerable<string> lines = input.SplitInputIntoLines();
+			string pattern = lines.First();
+			return lines.Skip(1)
+				.Select(x => pattern.Replace("$$VAL$$", x))
+				.ToMultiLineString();
+		}
+
+		public string ExtractPattern(string input)
+		{
+			IEnumerable<string> lines = input.SplitInputIntoLines();
+			string pattern = lines.First();
+			return lines.Skip(1)
+				.Select(x => 
+							{
+								Match m = Regex.Match(x, pattern);
+								return m.Success ? m.Value : string.Empty;
+							}
+					)
+				.ToMultiLineString();
+		}
+
+		public string LogDateToSplunkDate(string logDate)
+		{
+			string[] array = logDate.ToPlainTextSingleSpaceSingleLine().Split(new[] { '-', ':', '.', ' ' });
+			string Y = array[0];
+			string M = array[1];
+			string D = array[2];
+			string H = array[3];
+			string Min = array[4];
+			string S = array[5];
+
+			return $"\"{M}/{D}/{Y}:{H}:{Min}:{S}\"";
 		}
 	}
 
-	public class IpAddress
+	internal static class ExtensionMethods
 	{
-		public string ToHexNumberAsString(string ipAddress)
+		public static string[] SplitInputIntoLines(this string input)
 		{
-			return ByteArrayToHexString(ToNumber(ipAddress));
+			return input.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+		}
+		public static string ToPlainTextSingleSpaceSingleLine(this string input)
+		{
+			return Regex.Replace(input, @"\s+", " ");
 		}
 
-		public string ToString(string ipAddressAsHexNumber)
+		public static string ToSingleLine(this string input)
 		{
-			return ToString(HexStringToByteArray(ipAddressAsHexNumber));
+			return Regex.Replace(input, Environment.NewLine, " ");
 		}
 
-		public byte[] ToNumber(string ipAddress)
+		public static string ToMultiLineString<T>(this IEnumerable<T> lines)
 		{
-			try
-			{
-				return DotNetIpAddress.Parse(ipAddress).GetAddressBytes();
-			}
-			catch (Exception e)
-			{
-				//log.InfoFormat($"{typeof(IpAddress).FullName}: {ipAddress}. {e}");
-				throw;
-			}
+			return JoinIntoString(lines, Environment.NewLine);
 		}
 
-		public string ToString(byte[] ipAddress)
+		public static string JoinIntoString<T>(this IEnumerable<T> lines, string separator)
 		{
-			try
-			{
-				DotNetIpAddress dotNetIpAddress = new DotNetIpAddress(ipAddress);
-
-				if (dotNetIpAddress.AddressFamily == AddressFamily.InterNetwork)
-					return dotNetIpAddress.MapToIPv4().ToString();
-				else if (dotNetIpAddress.AddressFamily == AddressFamily.InterNetworkV6)
-					return dotNetIpAddress.MapToIPv6().ToString();
-				else
-					throw new ArgumentException(string.Format("Ip address belongs to {0} which is not supported.", dotNetIpAddress.AddressFamily));
-			}
-			catch (Exception e)
-			{
-				//log.InfoFormat(string"ByteArrayToHexString(ipAddress)}. {e}");
-				throw;
-			}
-		}
-		private static string ByteArrayToHexString(byte[] bytes)
-		{
-			return ("0x" + BitConverter.ToString(bytes).Replace("-", string.Empty)).ToUpper();
+			return string.Join(separator, lines);
 		}
 
-		private byte[] HexStringToByteArray(string hexString)
+		public static string SurroundWith(this string input, string begin, string end)
 		{
-			hexString = Regex.Replace(hexString, "0x", string.Empty, RegexOptions.IgnoreCase);
-			SoapHexBinary shb = SoapHexBinary.Parse(hexString);
-			return shb.Value;
+			return JoinIntoString(
+				new List<string>() { begin, input, end },
+				" ");
 		}
-
-		//private static log4net.ILog log = log4net.LogManager.GetLogger(typeof(IpAddress));
 	}
 }

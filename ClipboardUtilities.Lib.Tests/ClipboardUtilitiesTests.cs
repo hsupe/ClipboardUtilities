@@ -85,12 +85,27 @@ namespace ClipboardUtilities.Lib.Tests
 		{
 			Test(new List<string>() { "0XBFA80C15", "0XBFC80C0D", "0X00000000" }, new List<string>() { "191.168.12.21", "191.200.12.13", "0.0.0.0" }, _sut.HexToIpAddress);
 		}
-		//[Fact]
-		//public void ApplyPattern()
-		//{
-		//	Test(new List<string>() { "$$VAL$$ is $$VAL$$", "Monday", "Tuesday" }, 
-		//		new List<string>() { "Monday is Monday", "Tuesday is Tuesday"}, _sut.ApplyPattern);
-		//}
+
+		[Fact]
+		public void ApplyPattern()
+		{
+			Test(new List<string>() { "$$VAL$$ is $$VAL$$", "Monday", "Tuesday" },
+				new List<string>() { "Monday is Monday", "Tuesday is Tuesday" }, _sut.ApplyPattern);
+		}
+
+		[Fact]
+		public void ExtractPattern()
+		{
+			Test(new List<string>() { @"\d+", "EmpId:123", "No matching pattern", "EmpId:456" },
+				new List<string>() { "123", "", "456" }, _sut.ExtractPattern);
+		}
+
+		[Fact]
+		public void LogDateToSplunkDate()
+		{
+			Assert.Equal("\"01/20/2015:16:47:32\"", _sut.LogDateToSplunkDate("2015-01-20  16:47:32.777"));
+		}
+
 	}
 
 	internal static class ExtensionMethods
