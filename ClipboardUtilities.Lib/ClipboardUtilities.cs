@@ -12,6 +12,7 @@ namespace ClipboardUtilities.Lib
 	{
 		public string Trim(string input)
 		{
+			//TODO Refactor this pattern, it is repeating several times.
 			return input.SplitInputIntoLines()
 				.Select(x => x.Trim())
 				.ToMultiLineString();

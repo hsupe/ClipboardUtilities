@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace ClipboardUtilities.Lib
 {
+	// TODO Clean up
 	public class Sql
 	{
 		public string AssignValuesToVariables(string input)
@@ -37,6 +38,7 @@ namespace ClipboardUtilities.Lib
 				|| string.Compare(input.Trim(), "null", true /*ignore case */) == 0;
 		}
 
+		//TODO Refactor AlignOn
 		private string AlignOn(string input, string keyword)
 		{
 			if (string.IsNullOrEmpty(input))
@@ -90,7 +92,7 @@ namespace ClipboardUtilities.Lib
 
 			return currentPosition;
 		}
-
+		//TODO Refactor ConvertTabsTo4Spaces
 		private string ConvertTabsTo4Spaces(string input)
 		{
 			if (string.IsNullOrEmpty(input))
