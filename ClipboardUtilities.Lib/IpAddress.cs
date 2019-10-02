@@ -25,16 +25,16 @@ namespace ClipboardUtilities.Lib
 
 		public string ToString(byte[] ipAddress)
 		{
-			IPAddress dotNetIpAddress = new IPAddress(ipAddress);
+			var dotNetIpAddress = new IPAddress(ipAddress);
 
 			if (dotNetIpAddress.AddressFamily == AddressFamily.InterNetwork)
 				return dotNetIpAddress.MapToIPv4().ToString();
-			else if (dotNetIpAddress.AddressFamily == AddressFamily.InterNetworkV6)
+			if (dotNetIpAddress.AddressFamily == AddressFamily.InterNetworkV6)
 				return dotNetIpAddress.MapToIPv6().ToString();
-			else
-				throw new ArgumentException(
-					$"Ip address belongs to {dotNetIpAddress.AddressFamily} which is not supported.");
+			throw new ArgumentException(
+				$"Ip address belongs to {dotNetIpAddress.AddressFamily} which is not supported.");
 		}
+
 		private static string ByteArrayToHexString(byte[] bytes)
 		{
 			return ("0x" + BitConverter.ToString(bytes).Replace("-", string.Empty)).ToUpper();
@@ -43,7 +43,7 @@ namespace ClipboardUtilities.Lib
 		private byte[] HexStringToByteArray(string hexString)
 		{
 			hexString = Regex.Replace(hexString, "0x", string.Empty, RegexOptions.IgnoreCase);
-			SoapHexBinary shb = SoapHexBinary.Parse(hexString);
+			var shb = SoapHexBinary.Parse(hexString);
 			return shb.Value;
 		}
 	}

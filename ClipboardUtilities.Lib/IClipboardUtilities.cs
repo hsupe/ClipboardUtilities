@@ -1,0 +1,26 @@
+﻿namespace ClipboardUtilities.Lib
+{
+	public interface IClipboardUtilities
+	{
+		string Trim(string input);
+		string Sort(string input);
+		string Reverse(string input);
+		string RemoveDuplicates(string input);
+		string ConvertDecimalTo8BytesLowercaseHex(string input);
+		string ConvertHexToDecimal(string input);
+		string ToSqlInList(string input, bool includeValuesInQuotes = false);
+		string ToSqlInListQuoted(string input);
+		string IpAddressToHexNumber(string input);
+		string HexToIpAddress(string input);
+		string ApplyPattern(string input);
+		string ExtractPattern(string input);
+		string LogDateToSplunkDate(string logDate);
+		string FormatXml(string input);
+		string DefineCSharpByteArray(string hexSequence);
+		string RemoveEmptyLines(string input);
+		string ToSplunkOr(string input);
+		string ToSingleToLine(string input);
+		string ToSqlSelectAs(string input);
+		string AssignValuesToVariables(string input);
+	}
+}

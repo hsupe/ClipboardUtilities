@@ -1,29 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
-
+using System.Xml.Linq;
 
 namespace ClipboardUtilities.Lib
 {
-	public interface IClipboardUtilities
-	{
-		string Trim(string input);
-		string Sort(string input);
-		string Reverse(string input);
-		string RemoveDuplicates(string input);
-		string ConvertDecimalTo8BytesLowercaseHex(string input);
-		string ConvertHexToDecimal(string input);
-		string ToSqlInList(string input, bool includeValuesInQuotes = false);
-		string ToSqlInListQuoted(string input);
-		string IpAddressToHexNumber(string input);
-		string HexToIpAddress(string input);
-		string ApplyPattern(string input);
-		string ExtractPattern(string input);
-		string LogDateToSplunkDate(string logDate);
-	}
-
 	public class ClipboardUtilities : IClipboardUtilities
 	{
 		public string Trim(string input)
@@ -70,10 +54,10 @@ namespace ClipboardUtilities.Lib
 
 		public string ToSqlInList(string input, bool includeValuesInQuotes = false)
 		{
-			string pattern = includeValuesInQuotes ? "'$$VAL$$'," : "$$VAL$$,";
+			var pattern = includeValuesInQuotes ? "'$$VAL$$'," : "$$VAL$$,";
 			input = pattern + Environment.NewLine + input;
 			return ApplyPattern(input)
-				.TrimEnd(',')
+				.RemoveTrailing(",")
 				.SurroundWith("(", ")")
 				.ToSingleLine();
 		}
@@ -100,7 +84,7 @@ namespace ClipboardUtilities.Lib
 		public string ApplyPattern(string input)
 		{
 			IEnumerable<string> lines = input.SplitInputIntoLines();
-			string pattern = lines.First();
+			var pattern = lines.First();
 			return lines.Skip(1)
 				.Select(x => pattern.Replace("$$VAL$$", x))
 				.ToMultiLineString();
@@ -109,62 +93,120 @@ namespace ClipboardUtilities.Lib
 		public string ExtractPattern(string input)
 		{
 			IEnumerable<string> lines = input.SplitInputIntoLines();
-			string pattern = lines.First();
+			var pattern = lines.First();
 			return lines.Skip(1)
-				.Select(x => 
-							{
-								Match m = Regex.Match(x, pattern);
-								return m.Success ? m.Value : string.Empty;
-							}
-					)
+				.Select(x =>
+					{
+						var m = Regex.Match(x, pattern);
+						return m.Success ? m.Value : string.Empty;
+					}
+				)
 				.ToMultiLineString();
 		}
 
+		[SuppressMessage("ReSharper", "InconsistentNaming")]
 		public string LogDateToSplunkDate(string logDate)
 		{
-			string[] array = logDate.ToPlainTextSingleSpaceSingleLine().Split(new[] { '-', ':', '.', ' ' });
-			string Y = array[0];
-			string M = array[1];
-			string D = array[2];
-			string H = array[3];
-			string Min = array[4];
-			string S = array[5];
+			var array = logDate.ToPlainTextSingleSpaceSingleLine().Split('-', ':', '.', ' ');
+			var Y = array[0];
+			var M = array[1];
+			var D = array[2];
+			var H = array[3];
+			var Min = array[4];
+			var S = array[5];
 
 			return $"\"{M}/{D}/{Y}:{H}:{Min}:{S}\"";
 		}
-	}
 
-	internal static class ExtensionMethods
-	{
-		public static string[] SplitInputIntoLines(this string input)
+		public string FormatXml(string input)
 		{
-			return input.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-		}
-		public static string ToPlainTextSingleSpaceSingleLine(this string input)
-		{
-			return Regex.Replace(input, @"\s+", " ");
-		}
-
-		public static string ToSingleLine(this string input)
-		{
-			return Regex.Replace(input, Environment.NewLine, " ");
+			try
+			{
+				input = input.RemoveLeading("xml=");
+				return XDocument.Parse(input).ToString();
+			}
+			catch (Exception e)
+			{
+				return e.ToString();
+			}
 		}
 
-		public static string ToMultiLineString<T>(this IEnumerable<T> lines)
+		public string DefineCSharpByteArray(string input)
 		{
-			return JoinIntoString(lines, Environment.NewLine);
+			try
+			{
+				var array = StringToByte(input);
+
+				if (array.Length == 0)
+					return string.Empty;
+
+				var sb = new StringBuilder();
+
+				var count = 0;
+				foreach (var b in array)
+				{
+					sb.Append(string.Format("0x{0:X2}, ", b));
+					count++;
+					if (count % 20 == 0)
+						sb.AppendLine();
+				}
+
+				var arrayDefinition = sb.ToString()
+					.TrimEnd(',', ' ', '\r', '\n');
+
+				return string.Format("byte[] arrayName = {{{0}{1}{0}}};", Environment.NewLine, arrayDefinition);
+			}
+			catch (Exception ex)
+			{
+				return ex.ToString();
+			}
 		}
 
-		public static string JoinIntoString<T>(this IEnumerable<T> lines, string separator)
+		public string RemoveEmptyLines(string input)
 		{
-			return string.Join(separator, lines);
+			return Regex.Replace(input, @"^\s+$[\r\n]*", string.Empty, RegexOptions.Multiline);
 		}
 
-		public static string SurroundWith(this string input, string begin, string end)
+		public string ToSplunkOr(string input)
 		{
-			return JoinIntoString(
-				new List<string>() { begin, input, end },
-				" ");
+			var pattern = "$$VAL$$ OR";
+			input = pattern + Environment.NewLine + input;
+			return ApplyPattern(input)
+				.RemoveTrailing("OR")
+				.SurroundWith("(", ")")
+				.ToSingleLine();
+		}
+
+		public string ToSingleToLine(string input)
+		{
+			return input.ToSingleLine();
+		}
+
+		public string ToSqlSelectAs(string input)
+		{
+			var pattern = "    $$VAL$$ as '$$VAL$$',";
+			input = pattern + Environment.NewLine + input;
+			return "select" + Environment.NewLine
+			                + ApplyPattern(input)
+				                .RemoveTrailing(",");
+		}
+
+		public string AssignValuesToVariables(string input)
+		{
+			return new Sql().AssignValuesToVariables(input);
+		}
+
+		private static byte[] StringToByte(string hexSequence)
+		{
+			hexSequence = hexSequence.Trim().RemoveLeading("0x");
+
+			if (hexSequence.Length % 2 > 0)
+				throw new Exception("The provided byte sequence has odd number of characters, which makes it invalid");
+
+			return Enumerable.Range(0, hexSequence.Length)
+				.Where(x => x % 2 == 0)
+				.Select(x => Convert.ToByte(hexSequence.Substring(x, 2), 16))
+				.ToArray();
 		}
 	}
 }
