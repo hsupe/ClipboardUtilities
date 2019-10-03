@@ -2,23 +2,20 @@
 using System.Windows.Forms;
 namespace HandyManny
 {
+	//TODO Add copy build bat file to sol explorer.
+	//TODO Kill the HandyManny process before compile
+	//TODO Rename ClipboardUtilities and HandyManny
 	public class ActionManager
 	{
-		private readonly NotifyIcon _notifyIcon;
 		private readonly ClipboardUtilities.Lib.ClipboardUtilities _clipboardUtilities;
 
-		public ActionManager(NotifyIcon notifyIcon)
-		{
-			_notifyIcon = notifyIcon;
-			_clipboardUtilities = new ClipboardUtilities.Lib.ClipboardUtilities();
-		}
-		
-		# region context menu creation
+		public ActionManager() => _clipboardUtilities = new ClipboardUtilities.Lib.ClipboardUtilities();
 
 		public void BuildContextMenu(ContextMenuStrip contextMenuStrip)
 		{
 			contextMenuStrip.Items.Clear();
 			contextMenuStrip.Items.AddRange(
+				// TODO Can this be reduced to an array and loop
 				new ToolStripItem[] {
 					ToolStripMenuItemWithHandler("IpAddress To Hex Number",  IpAddressToHex),
                     ToolStripMenuItemWithHandler("Hex To IpAddress",  HexToIpAddress),
@@ -60,9 +57,7 @@ namespace HandyManny
 				});
 		}
 
-		#endregion context menu creation
-
-		#region event handlers
+		//TODO can these methods be converted to single method(object sender, EventArgs e) with a switch to identify the delegate and call it at the end.
 		private void IpAddressToHex(object sender, EventArgs e) => MyClipboard.Text = _clipboardUtilities.IpAddressToHexNumber(MyClipboard.Text);
 
 		private void HexToIpAddress(object sender, EventArgs e) => MyClipboard.Text = _clipboardUtilities.HexToIpAddress(MyClipboard.Text);
@@ -105,18 +100,11 @@ namespace HandyManny
 
 		private void DefineCSharpByteArray(object sender, EventArgs e) => MyClipboard.Text = _clipboardUtilities.DefineCSharpByteArray(MyClipboard.Text);
 
-		#endregion event handlers
-
-		#region support methods
-
 		public ToolStripMenuItem ToolStripMenuItemWithHandler(string displayText, EventHandler eventHandler)
 		{
 			var item = new ToolStripMenuItem(displayText);
 			if (eventHandler != null) { item.Click += eventHandler; }
 			return item;
 		}
-
-		# endregion support methods
-
 	}
 }

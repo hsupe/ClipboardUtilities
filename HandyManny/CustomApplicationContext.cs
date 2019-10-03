@@ -19,7 +19,7 @@ namespace HandyManny
 		public CustomApplicationContext() 
 		{
 			InitializeContext();
-            ActionManager = new ActionManager(notifyIcon);
+            ActionManager = new ActionManager();
 		}
 
         private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
