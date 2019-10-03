@@ -2,8 +2,6 @@
 using System.Windows.Forms;
 namespace HandyManny
 {
-	//TODO Add copy build bat file to sol explorer.
-	//TODO Kill the HandyManny process before compile
 	//TODO Rename ClipboardUtilities and HandyManny
 	public class ActionManager
 	{
