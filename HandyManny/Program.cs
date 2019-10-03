@@ -13,7 +13,7 @@ namespace HandyManny
 		[STAThread]
 		static void Main()
 		{
-			if (InstanceAlreadyRunnig())
+			if (InstanceAlreadyRunning())
 				return;
 
 			Application.EnableVisualStyles();
@@ -31,7 +31,7 @@ namespace HandyManny
 			}
 		}
 
-		private static bool InstanceAlreadyRunnig()
+		private static bool InstanceAlreadyRunning()
 		{
 			// This is not perfect Mutex - if two instances launch exactly same time, they may see each other running and both quit - live locking.
 			// But this is simple and serves the purpose quite well.

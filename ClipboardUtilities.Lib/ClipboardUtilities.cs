@@ -115,7 +115,6 @@ namespace ClipboardUtilities.Lib
 			var H = array[3];
 			var Min = array[4];
 			var S = array[5];
-
 			return $"\"{M}/{D}/{Y}:{H}:{Min}:{S}\"";
 		}
 
@@ -146,7 +145,7 @@ namespace ClipboardUtilities.Lib
 				var count = 0;
 				foreach (var b in array)
 				{
-					sb.Append(string.Format("0x{0:X2}, ", b));
+					sb.Append($"0x{b:X2}, ");
 					count++;
 					if (count % 20 == 0)
 						sb.AppendLine();

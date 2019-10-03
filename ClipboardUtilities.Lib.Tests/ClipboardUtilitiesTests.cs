@@ -104,15 +104,19 @@ namespace ClipboardUtilities.Lib.Tests
 		[Fact]
 		public void HexToIpAddress()
 		{
+			// ReSharper disable StringLiteralTypo
 			Test(new List<string> { "0XBFA80C15", "0XBFC80C0D", "0X00000000" },
 				new List<string> { "191.168.12.21", "191.200.12.13", "0.0.0.0" }, _sut.HexToIpAddress);
+			// ReSharper restore StringLiteralTypo
 		}
 
 		[Fact]
 		public void IpAddressToHexNumber()
 		{
+			// ReSharper disable StringLiteralTypo
 			Test(new List<string> { "191.168.12.21", "191.200.12.13", "0.0.0.0" },
 				new List<string> { "0XBFA80C15", "0XBFC80C0D", "0X00000000" }, _sut.IpAddressToHexNumber);
+			// ReSharper restore StringLiteralTypo
 		}
 
 
@@ -158,7 +162,9 @@ namespace ClipboardUtilities.Lib.Tests
 		[Fact]
 		public void ToSingleToLine()
 		{
+			// ReSharper disable StringLiteralTypo
 			Assert.Equal("Jira-1234 Fix the crash", _sut.ToSingleToLine("Jira-1234\r\nFix the crash"));
+			// ReSharper restore StringLiteralTypo
 		}
 
 		[Fact]

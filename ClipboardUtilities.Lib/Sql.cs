@@ -21,10 +21,9 @@ namespace ClipboardUtilities.Lib
 			var sb = new StringBuilder();
 
 			for (var i = 0; i < variables.Length; i++)
-				if (IsNumberOrNull(values[i]))
-					sb.AppendLine(string.Format("\t{0} = {1},", variables[i], values[i]));
-				else // enclose in quotes
-					sb.AppendLine(string.Format("\t{0} = '{1}',", variables[i], values[i]));
+				sb.AppendLine(IsNumberOrNull(values[i])
+					? $"\t{variables[i]} = {values[i]},"
+					: $"\t{variables[i]} = '{values[i]}',");
 
 			var output = ConvertTabsTo4Spaces("select " + Environment.NewLine + sb.ToString().TrimEnd().TrimEnd(','));
 			return AlignOn(output, "=");
@@ -35,7 +34,7 @@ namespace ClipboardUtilities.Lib
 			return
 				Regex.IsMatch(input, @"^-?[0-9\.]+")
 				&& !input.Contains(":")
-				|| string.Compare(input.Trim(), "null", true /*ignore case */) == 0;
+				|| String.Compare(input.Trim(), "null", StringComparison.OrdinalIgnoreCase) == 0;
 		}
 
 		//TODO Refactor AlignOn
@@ -47,8 +46,8 @@ namespace ClipboardUtilities.Lib
 
 			var lines = input.Replace("\r\n", "\n").Split('\n');
 
-			var rightMostPoisition = FindRightMostPositionOfKeywordInLines(lines, keyword);
-			InsertSpacesToAlignToPosition(lines, keyword, rightMostPoisition);
+			var rightMostPosition = FindRightMostPositionOfKeywordInLines(lines, keyword);
+			InsertSpacesToAlignToPosition(lines, keyword, rightMostPosition);
 
 			return string.Join(Environment.NewLine, lines);
 		}
@@ -58,7 +57,7 @@ namespace ClipboardUtilities.Lib
 			var rightMostPosition = 0;
 			foreach (var line in lines)
 			{
-				var position = line.IndexOf(keyword);
+				var position = line.IndexOf(keyword, StringComparison.Ordinal);
 				if (rightMostPosition < position)
 					rightMostPosition = position;
 			}
@@ -70,7 +69,7 @@ namespace ClipboardUtilities.Lib
 		{
 			for (var i = 0; i < lines.Length; i++)
 			{
-				var currentPosition = lines[i].IndexOf(keyword);
+				var currentPosition = lines[i].IndexOf(keyword, StringComparison.Ordinal);
 				if (currentPosition > 0)
 				{
 					var spacesToInsert = alignToPosition - currentPosition;

@@ -13,21 +13,21 @@ namespace HandyManny
     {
         private static readonly string IconFileName = "route.ico";
         private static readonly string DefaultTooltip = "HandyManny";
-        private readonly ActionManager ActionManager;
+        private readonly ActionManager _actionManager;
        
 		// This class should be created and passed into Application.Run( ... )
 		public CustomApplicationContext() 
 		{
 			InitializeContext();
-            ActionManager = new ActionManager();
+            _actionManager = new ActionManager();
 		}
 
         private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = false;
-            ActionManager.BuildContextMenu(notifyIcon.ContextMenuStrip);
-            notifyIcon.ContextMenuStrip.Items.Add(new ToolStripSeparator());
-            notifyIcon.ContextMenuStrip.Items.Add(ActionManager.ToolStripMenuItemWithHandler("&Exit", exitItem_Click));
+            _actionManager.BuildContextMenu(_notifyIcon.ContextMenuStrip);
+            _notifyIcon.ContextMenuStrip.Items.Add(new ToolStripSeparator());
+            _notifyIcon.ContextMenuStrip.Items.Add(_actionManager.ToolStripMenuItemWithHandler("&Exit", exitItem_Click));
         }
 
         // From http://stackoverflow.com/questions/2208690/invoke-notifyicons-context-menu
@@ -36,28 +36,28 @@ namespace HandyManny
             if (e.Button == MouseButtons.Left)
             {
                 MethodInfo mi = typeof(NotifyIcon).GetMethod("ShowContextMenu", BindingFlags.Instance | BindingFlags.NonPublic);
-                mi.Invoke(notifyIcon, null);
+                mi.Invoke(_notifyIcon, null);
             }
         }
 
         # region generic code framework
 
         private System.ComponentModel.IContainer components;	// a list of components to dispose when the context is disposed
-        private NotifyIcon notifyIcon;				            // the icon that sits in the system tray
+        private NotifyIcon _notifyIcon;				            // the icon that sits in the system tray
 
         private void InitializeContext()
         {
             components = new System.ComponentModel.Container();
-            notifyIcon = new NotifyIcon(components)
+            _notifyIcon = new NotifyIcon(components)
                              {
                                  ContextMenuStrip = new ContextMenuStrip(),
                                  Icon = new Icon(IconFileName),
                                  Text = DefaultTooltip,
                                  Visible = true
                              };
-            notifyIcon.ContextMenuStrip.Opening += ContextMenuStrip_Opening;
+            _notifyIcon.ContextMenuStrip.Opening += ContextMenuStrip_Opening;
             //notifyIcon.DoubleClick += notifyIcon_DoubleClick;
-            notifyIcon.MouseUp += notifyIcon_MouseUp;
+            _notifyIcon.MouseUp += notifyIcon_MouseUp;
         }
 
         
@@ -78,7 +78,7 @@ namespace HandyManny
         // If we are presently showing a form, clean it up.
         protected override void ExitThreadCore()
         {
-            notifyIcon.Visible = false; // should remove lingering tray icon
+            _notifyIcon.Visible = false; // should remove lingering tray icon
             base.ExitThreadCore();
         }
 
