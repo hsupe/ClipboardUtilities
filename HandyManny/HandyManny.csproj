@@ -82,10 +82,6 @@
       <Project>{3969c2b9-2e2c-43c8-8ff7-ff16fb434327}</Project>
       <Name>ClipboardUtilities.Lib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MutexManager\MutexManager.csproj">
-      <Project>{CE119D2D-F9B6-4FCF-B527-40CAEAEF029C}</Project>
-      <Name>MutexManager</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
