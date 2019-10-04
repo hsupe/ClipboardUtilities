@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Windows.Forms;
+
 namespace ClipboardUtilities.UI
 {
-	//TODO Rename ClipboardUtilities and ClipboardUtilities.UI
 	public class ActionManager
 	{
-		private readonly ClipboardUtilities.Lib.ClipboardUtilities _clipboardUtilities;
+		private readonly Lib.ClipboardUtilities _clipboardUtilities;
 
-		public ActionManager() => _clipboardUtilities = new ClipboardUtilities.Lib.ClipboardUtilities();
+		public ActionManager(Lib.ClipboardUtilities clipboardUtilities) => _clipboardUtilities = clipboardUtilities;
 
 		public void BuildContextMenu(ContextMenuStrip contextMenuStrip)
 		{

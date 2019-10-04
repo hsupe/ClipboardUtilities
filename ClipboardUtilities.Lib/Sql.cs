@@ -34,7 +34,7 @@ namespace ClipboardUtilities.Lib
 
 		private static bool IsNumber(string input) =>
 			Regex.IsMatch(input, @"^-?[0-9\.]+")
-			&& !input.Contains(":"); //// TODO can this : be handled in regex? Does it exclude dates?
+			&& !input.Contains(":"); //// TODO can this : be handled in regex? Does it exclude dates? Is it even needed - seems like the number regular expression is sufficient?
                             
 		private static bool IsNullConstant(string input) => String.Compare(input.Trim(), "null", StringComparison.OrdinalIgnoreCase) == 0;
 
