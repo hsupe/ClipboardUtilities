@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace HandyManny
+namespace ClipboardUtilities.UI
 {
 	public class MyClipboard
     {

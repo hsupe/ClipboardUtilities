@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 
 // Most of this code is adapted from https://www.simple-talk.com/dotnet/.net-framework/creating-tray-applications-in-.net-a-practical-guide/
-namespace HandyManny
+namespace ClipboardUtilities.UI
 {
 	// Framework for restricting app to a single instance and for running as a tray app.
 	static class Program

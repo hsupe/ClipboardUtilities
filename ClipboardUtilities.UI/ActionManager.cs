@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
-namespace HandyManny
+namespace ClipboardUtilities.UI
 {
-	//TODO Rename ClipboardUtilities and HandyManny
+	//TODO Rename ClipboardUtilities and ClipboardUtilities.UI
 	public class ActionManager
 	{
 		private readonly ClipboardUtilities.Lib.ClipboardUtilities _clipboardUtilities;

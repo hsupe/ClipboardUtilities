@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace HandyManny
+namespace ClipboardUtilities.UI
 {
     // Framework for running application as a tray app.
 
@@ -12,7 +12,7 @@ namespace HandyManny
     public class CustomApplicationContext : ApplicationContext
     {
         private static readonly string IconFileName = "route.ico";
-        private static readonly string DefaultTooltip = "HandyManny";
+        private static readonly string DefaultTooltip = "ClipboardUtilities.UI";
         private readonly ActionManager _actionManager;
        
 		// This class should be created and passed into Application.Run( ... )

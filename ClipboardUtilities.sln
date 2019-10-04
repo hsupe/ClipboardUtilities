@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipboardUtilities.Lib", "C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipboardUtilities.Lib.Tests", "ClipboardUtilities.Lib.Tests\ClipboardUtilities.Lib.Tests.csproj", "{31EBF1CF-D582-4E21-B428-C888BE1360C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandyManny", "HandyManny\HandyManny.csproj", "{F6E5F498-BC1A-46F7-8DDA-3C5D3282357F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipboardUtilities.UI", "ClipboardUtilities.UI\ClipboardUtilities.UI.csproj", "{F6E5F498-BC1A-46F7-8DDA-3C5D3282357F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
