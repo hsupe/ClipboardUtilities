@@ -40,11 +40,7 @@ namespace HandyManny
 			// But this is simple and serves the purpose quite well.
 
 			string thisProcessName = Process.GetCurrentProcess().ProcessName;
-
-			if (Process.GetProcesses().Count(p => p.ProcessName == thisProcessName) > 1)
-				return true;
-
-			return false;
+			return Process.GetProcesses().Count(p => p.ProcessName == thisProcessName) > 1;
 		}
 	}
 }
