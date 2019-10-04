@@ -30,22 +30,15 @@ namespace ClipboardUtilities.Lib
 			return AlignOnAssignmentOperator(output);
 		}
 
-		private static string AlignOnAssignmentOperator(string output)
-		{
-			return new TextAligner(output, "=").Align();
-		}
+		private static bool IsNumberOrNull(string input) => IsNumber(input) || IsNullConstant(input);
 
-		private bool IsNumberOrNull(string input)
-		{
-			return
-				Regex.IsMatch(input, @"^-?[0-9\.]+")
-				&& !input.Contains(":")
-				|| String.Compare(input.Trim(), "null", StringComparison.OrdinalIgnoreCase) == 0;
-		}
+		private static bool IsNumber(string input) =>
+			Regex.IsMatch(input, @"^-?[0-9\.]+")
+			&& !input.Contains(":"); //// TODO can this : be handled in regex? Does it exclude dates?
+                            
+		private static bool IsNullConstant(string input) => String.Compare(input.Trim(), "null", StringComparison.OrdinalIgnoreCase) == 0;
 
-		private string ConvertTabsTo4Spaces(string input)
-		{
-			return new TabToSpacesConvertor(4).Convert(input);
-		}
+		private static string ConvertTabsTo4Spaces(string input) => new TabToSpacesConvertor(4).Convert(input);
+		private static string AlignOnAssignmentOperator(string output) => new TextAligner(output, "=").Align();
 	}
 }
