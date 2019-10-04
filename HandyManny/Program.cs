@@ -14,7 +14,10 @@ namespace HandyManny
 		static void Main()
 		{
 			if (InstanceAlreadyRunning())
+			{
+				MessageBox.Show("Program already running.", Process.GetCurrentProcess().ProcessName);
 				return;
+			}
 
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
