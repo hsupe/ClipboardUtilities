@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace ClipboardUtilities.Lib
 {
-	public class ClipboardUtilities : IClipboardUtilities
+	public class StringUtilities : IStringUtilities
 	{
 		public string Trim(string input)
 		{

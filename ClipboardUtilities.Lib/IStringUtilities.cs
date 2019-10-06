@@ -1,6 +1,7 @@
 ﻿namespace ClipboardUtilities.Lib
 {
-	public interface IClipboardUtilities
+	// TODO This should really be just StringUtilities. In future, add SetUtilities with Union, intersect, etc. operations.
+	public interface IStringUtilities
 	{
 		string Trim(string input);
 		string Sort(string input);
