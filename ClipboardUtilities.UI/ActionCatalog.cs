@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace ClipboardUtilities.UI
 {
+	//TODO Add Unit Tests
 	public class ActionCatalog
 	{
 		// ReSharper disable PrivateFieldCanBeConvertedToLocalVariable
