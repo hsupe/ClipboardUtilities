@@ -20,7 +20,7 @@ namespace ClipboardUtilities.UI
 		{
 			InitializeContext();
 			// TODO We should be able to add more than one ActionCatalogs to actionManager. For example string catalog, math catalog, set catalog and so on.
-			var catalog = new ActionCatalog(new ClipboardUtilities.Lib.StringUtilities());
+			var catalog = new ActionCatalog(new Lib.StringUtilities());
 			_actionManager = new ActionManager(catalog);
 		}
 
@@ -37,8 +37,8 @@ namespace ClipboardUtilities.UI
         {
             if (e.Button == MouseButtons.Left)
             {
-                MethodInfo mi = typeof(NotifyIcon).GetMethod("ShowContextMenu", BindingFlags.Instance | BindingFlags.NonPublic);
-                mi.Invoke(_notifyIcon, null);
+	            MethodInfo mi = typeof(NotifyIcon).GetMethod("ShowContextMenu", BindingFlags.Instance | BindingFlags.NonPublic);
+	            if (mi != null) mi.Invoke(_notifyIcon, null);
             }
         }
 
@@ -66,7 +66,7 @@ namespace ClipboardUtilities.UI
 		// When the application context is disposed, dispose things like the notify icon.
 		protected override void Dispose( bool disposing )
 		{
-			if( disposing && components != null) { components.Dispose(); }
+			if( disposing) { components?.Dispose(); }
 		}
 
 		

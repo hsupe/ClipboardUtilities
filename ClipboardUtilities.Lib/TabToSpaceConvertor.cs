@@ -1,4 +1,4 @@
-﻿// This code is borrowed from my antoher repository: https://raw.githubusercontent.com/hlsupe/TabToSpacesConvertor/master/TabToSpacesConvertor/TabToSpacesConvertor.cs
+﻿// This code is borrowed from my another repository: https://raw.githubusercontent.com/hlsupe/TabToSpacesConvertor/master/TabToSpacesConvertor/TabToSpacesConvertor.cs
 using System.Text;
 
 namespace ClipboardUtilities.Lib
