@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionCatalog.cs" />
+    <Compile Include="ActionDiscoverer.cs" />
     <Compile Include="CustomApplicationContext.cs" />
     <Compile Include="ActionManager.cs" />
     <Compile Include="Clipboard.cs" />

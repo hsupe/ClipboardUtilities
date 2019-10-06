@@ -14,14 +14,14 @@ namespace ClipboardUtilities.UI
 		{
 			contextMenuStrip.Items.Clear();
 
-			var toolStripItems = _catalog.GetUtilities().Select(item => ToolStripMenuItemWithHandler(item, ItemHandler))
+			var toolStripItems = _catalog.Actions().Select(item => ToolStripMenuItemWithHandler(item, ItemHandler))
 				.Cast<ToolStripItem>().ToArray();
 			contextMenuStrip.Items.AddRange(toolStripItems);
 		}
 
 		private void ItemHandler(object sender, EventArgs e)
 		{
-			Clipboard.Text = _catalog.Invoke(GetMethod(), Clipboard.Text);
+			Clipboard.Text = _catalog.InvokeAction(GetMethod(), Clipboard.Text);
 
 			string GetMethod() => ((ToolStripItem.ToolStripItemAccessibleObject) ((ToolStripItem) sender).AccessibilityObject).Name;
 		}

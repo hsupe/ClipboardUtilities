@@ -19,6 +19,7 @@ namespace ClipboardUtilities.UI
 		public CustomApplicationContext() 
 		{
 			InitializeContext();
+			// TODO We should be able to add more than one ActionCatalogs to actionManager. For example string catalog, math catalog, set catalog and so on.
 			var catalog = new ActionCatalog(new ClipboardUtilities.Lib.ClipboardUtilities());
 			_actionManager = new ActionManager(catalog);
 		}
