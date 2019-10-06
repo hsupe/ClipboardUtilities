@@ -8,7 +8,7 @@
 		string RemoveDuplicates(string input);
 		string ConvertDecimalTo8BytesLowercaseHex(string input);
 		string ConvertHexToDecimal(string input);
-		string ToSqlInList(string input, bool includeValuesInQuotes = false);
+		string ToSqlInList(string input);
 		string ToSqlInListQuoted(string input);
 		string IpAddressToHexNumber(string input);
 		string HexToIpAddress(string input);

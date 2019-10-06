@@ -19,7 +19,8 @@ namespace ClipboardUtilities.UI
 		public CustomApplicationContext() 
 		{
 			InitializeContext();
-            _actionManager = new ActionManager(new ClipboardUtilities.Lib.ClipboardUtilities());
+			var catalog = new ActionCatalog(new ClipboardUtilities.Lib.ClipboardUtilities());
+			_actionManager = new ActionManager(catalog);
 		}
 
         private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)

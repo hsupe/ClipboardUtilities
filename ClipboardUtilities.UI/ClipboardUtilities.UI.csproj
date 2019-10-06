@@ -59,9 +59,10 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionCatalog.cs" />
     <Compile Include="CustomApplicationContext.cs" />
     <Compile Include="ActionManager.cs" />
-    <Compile Include="MyClipboard.cs" />
+    <Compile Include="Clipboard.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="app.config" />

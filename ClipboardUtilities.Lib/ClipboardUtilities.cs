@@ -53,7 +53,7 @@ namespace ClipboardUtilities.Lib
 				.ToMultiLineString();
 		}
 
-		public string ToSqlInList(string input, bool includeValuesInQuotes = false)
+		private string ToSqlInList(string input, bool includeValuesInQuotes)
 		{
 			var pattern = includeValuesInQuotes ? "'$$VAL$$'," : "$$VAL$$,";
 			input = pattern + Environment.NewLine + input;
@@ -63,6 +63,10 @@ namespace ClipboardUtilities.Lib
 				.ToSingleLine();
 		}
 
+		public string ToSqlInList(string input)
+		{
+			return ToSqlInList(input, false);
+		}
 		public string ToSqlInListQuoted(string input)
 		{
 			return ToSqlInList(input, true);
