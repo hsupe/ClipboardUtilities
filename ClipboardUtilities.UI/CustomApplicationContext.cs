@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace HandyManny
+namespace ClipboardUtilities.UI
 {
     // Framework for running application as a tray app.
 
@@ -12,14 +12,16 @@ namespace HandyManny
     public class CustomApplicationContext : ApplicationContext
     {
         private static readonly string IconFileName = "route.ico";
-        private static readonly string DefaultTooltip = "HandyManny";
+        private static readonly string DefaultTooltip = "ClipboardUtilities";
         private readonly ActionManager _actionManager;
        
 		// This class should be created and passed into Application.Run( ... )
 		public CustomApplicationContext() 
 		{
 			InitializeContext();
-            _actionManager = new ActionManager();
+			// TODO We should be able to add more than one ActionCatalogs to actionManager. For example string catalog, math catalog, set catalog and so on.
+			var catalog = new ActionCatalog(new Lib.StringUtilities());
+			_actionManager = new ActionManager(catalog);
 		}
 
         private void ContextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
@@ -35,8 +37,8 @@ namespace HandyManny
         {
             if (e.Button == MouseButtons.Left)
             {
-                MethodInfo mi = typeof(NotifyIcon).GetMethod("ShowContextMenu", BindingFlags.Instance | BindingFlags.NonPublic);
-                mi.Invoke(_notifyIcon, null);
+	            MethodInfo mi = typeof(NotifyIcon).GetMethod("ShowContextMenu", BindingFlags.Instance | BindingFlags.NonPublic);
+	            if (mi != null) mi.Invoke(_notifyIcon, null);
             }
         }
 
@@ -64,7 +66,7 @@ namespace HandyManny
 		// When the application context is disposed, dispose things like the notify icon.
 		protected override void Dispose( bool disposing )
 		{
-			if( disposing && components != null) { components.Dispose(); }
+			if( disposing) { components?.Dispose(); }
 		}
 
 		

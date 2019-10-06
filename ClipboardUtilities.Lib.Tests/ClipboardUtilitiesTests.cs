@@ -6,7 +6,7 @@ namespace ClipboardUtilities.Lib.Tests
 {
 	public class ClipboardUtilitiesTests
 	{
-		private readonly IClipboardUtilities _sut = new ClipboardUtilities();
+		private readonly IStringUtilities _sut = new StringUtilities();
 
 		private delegate string TestMethod(string input);
 

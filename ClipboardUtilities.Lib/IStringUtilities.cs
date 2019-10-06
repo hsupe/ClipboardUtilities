@@ -1,6 +1,7 @@
 ﻿namespace ClipboardUtilities.Lib
 {
-	public interface IClipboardUtilities
+	// TODO This should really be just StringUtilities. In future, add SetUtilities with Union, intersect, etc. operations.
+	public interface IStringUtilities
 	{
 		string Trim(string input);
 		string Sort(string input);
@@ -8,7 +9,7 @@
 		string RemoveDuplicates(string input);
 		string ConvertDecimalTo8BytesLowercaseHex(string input);
 		string ConvertHexToDecimal(string input);
-		string ToSqlInList(string input, bool includeValuesInQuotes = false);
+		string ToSqlInList(string input);
 		string ToSqlInListQuoted(string input);
 		string IpAddressToHexNumber(string input);
 		string HexToIpAddress(string input);
