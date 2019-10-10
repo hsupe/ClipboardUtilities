@@ -101,11 +101,10 @@ namespace ClipboardUtilities.Lib.Tests
 			// ReSharper restore StringLiteralTypo
 		}
 
-
-		[Fact(Skip = "Missing functionality: Bad elements in input set")]
+		[Fact]
 		public void IpAddressToHexNumber_GivenInvalidInput_SkipsOverInvalidInput()
 		{
-			Test(new List<string> { "256.256.256.256" }, new List<string> { "Invalid: 256.256.256.256" },
+			Test(new List<string> { "256.256.256.256" }, new List<string> { "Invalid: [256.256.256.256]. An invalid IP address was specified." },
 				_sut.IpAddressToHexNumber);
 		}
 

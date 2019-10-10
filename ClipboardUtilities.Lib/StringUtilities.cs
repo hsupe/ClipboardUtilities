@@ -15,12 +15,24 @@ namespace ClipboardUtilities.Lib
 			return Iterator(input, x => x.Trim());
 		}
 
-		private static string Iterator(string input, Func<string, string> operation)
+		private string Iterator(string input, Func<string, string> operation)
 		{
 			return input.SplitInputIntoLines()
-				.Select(operation)
+				.Select(x => SkipOverBadInput(x, operation))
 				.ToMultiLineString();
 
+		}
+
+		private string SkipOverBadInput(string x, Func<string, string> operation)
+		{
+			try
+			{
+				return operation.Invoke(x);
+			}
+			catch (Exception e)
+			{
+				return $"Invalid: [{x}]. {e.Message}";
+			}
 		}
 
 		public string Sort(string input)

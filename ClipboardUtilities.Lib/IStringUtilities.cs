@@ -1,6 +1,5 @@
 ﻿namespace ClipboardUtilities.Lib
 {
-	// TODO This should really be just StringUtilities. In future, add SetUtilities with Union, intersect, etc. operations.
 	public interface IStringUtilities
 	{
 		string Trim(string input);
