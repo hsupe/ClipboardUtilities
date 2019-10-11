@@ -6,7 +6,7 @@ ClipboardUtilities is a system tray application that provides several clipboard 
 
 When you run the application it creates an icon in the system tray. Right clicking the icon, brings up menu with options each of which performs the given operation on the contents in Windows clipboard and puts the result back into the clipboard.
 
-![ClipboardUtilities](master/ClipboardUtilities.png)
+![ClipboardUtilities](https://github.com/hlsupe/ClipboardUtilities/blob/master/ClipboardUtilities.png)
 
 The installer is not available yet, but copying binaries and running the executable is sufficient.
 
