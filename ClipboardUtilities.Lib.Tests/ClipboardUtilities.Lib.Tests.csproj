@@ -63,7 +63,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="ClipboardUtilitiesTests.cs" />
+    <Compile Include="StringUtilitiesTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -12,10 +12,27 @@ namespace ClipboardUtilities.Lib
 	{
 		public string Trim(string input)
 		{
-			//TODO Refactor this pattern, it is repeating several times.
+			return Iterator(input, x => x.Trim());
+		}
+
+		private string Iterator(string input, Func<string, string> operation)
+		{
 			return input.SplitInputIntoLines()
-				.Select(x => x.Trim())
+				.Select(x => SkipOverBadInput(x, operation))
 				.ToMultiLineString();
+
+		}
+
+		private string SkipOverBadInput(string x, Func<string, string> operation)
+		{
+			try
+			{
+				return operation.Invoke(x);
+			}
+			catch (Exception e)
+			{
+				return $"Invalid: [{x}]. {e.Message}";
+			}
 		}
 
 		public string Sort(string input)
@@ -48,9 +65,7 @@ namespace ClipboardUtilities.Lib
 
 		public string ConvertHexToDecimal(string input)
 		{
-			return input.SplitInputIntoLines()
-				.Select(x => Convert.ToUInt64(x, 16))
-				.ToMultiLineString();
+			return Iterator(input, x => $"{Convert.ToUInt64(x, 16)}");
 		}
 
 		private string ToSqlInList(string input, bool includeValuesInQuotes)
@@ -74,16 +89,12 @@ namespace ClipboardUtilities.Lib
 
 		public string IpAddressToHexNumber(string input)
 		{
-			return input.SplitInputIntoLines()
-				.Select(x => new IpAddress().ToHexNumberAsString(x))
-				.ToMultiLineString();
+			return Iterator(input, x => new IpAddress().ToHexNumberAsString(x));
 		}
 
 		public string HexToIpAddress(string input)
 		{
-			return input.SplitInputIntoLines()
-				.Select(x => new IpAddress().ToString(x))
-				.ToMultiLineString();
+			return Iterator(input, x => new IpAddress().ToString(x));
 		}
 
 		public string ApplyPattern(string input)

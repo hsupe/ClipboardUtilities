@@ -4,23 +4,19 @@ using Xunit;
 
 namespace ClipboardUtilities.Lib.Tests
 {
-	public class ClipboardUtilitiesTests
+	public class StringUtilitiesTests
 	{
 		private readonly IStringUtilities _sut = new StringUtilities();
 
 		private delegate string TestMethod(string input);
 
-		private void Test(IEnumerable<string> input, IEnumerable<string> expected, TestMethod method)
-		{
-			Assert.Equal(expected.JoinIntoString(), method(input.JoinIntoString()));
-		}
+		private void Test(IEnumerable<string> input, IEnumerable<string> expected, TestMethod method) => Assert.Equal(expected.JoinIntoString(), method(input.JoinIntoString()));
 
-		private void FormatInvalidXml()
-		{
-			Assert.Contains("System.Xml.XmlException", _sut.FormatXml("<Project"));
-		}
+		[Fact]
+		public void FormatXml_GivenInvalidXml_ReturnsError() => Assert.Contains("System.Xml.XmlException", _sut.FormatXml("<Project"));
 
-		private void FormatInvalidXmlThrowsException()
+		[Fact]
+		public void FormatXml_GivenNoXmlPrefix_FormatsXml()
 		{
 			Assert.Equal(
 				"<Project>\r\n  <PropertyGroup>\r\n    <Configuration>Debug</Configuration>\r\n  </PropertyGroup>\r\n</Project>",
@@ -28,7 +24,8 @@ namespace ClipboardUtilities.Lib.Tests
 					"<Project> <PropertyGroup> <Configuration>Debug</Configuration> </PropertyGroup> </Project>"));
 		}
 
-		private void FormatXmlWithXmlPrefix()
+		[Fact]
+		public void FormatXml_GivenXmlPrefix_FormatsXml()
 		{
 			Assert.Equal(
 				"<Project>\r\n  <PropertyGroup>\r\n    <Configuration>Debug</Configuration>\r\n  </PropertyGroup>\r\n</Project>",
@@ -36,14 +33,15 @@ namespace ClipboardUtilities.Lib.Tests
 					"xml=<Project> <PropertyGroup> <Configuration>Debug</Configuration> </PropertyGroup> </Project>"));
 		}
 
-		private void DefineCSharpByteArray_ShouldConvertsToByteArrayGivenValidInput()
+		[Fact]
+		public void DefineCSharpByteArray_GivenValidInput_ConvertsToByteArray()
 		{
 			var expected = "byte[] arrayName = {\r\n0x0A, 0x12, 0x34, 0x0A, 0x12, 0x34, 0x0A\r\n};";
 			var actual = _sut.DefineCSharpByteArray("0A12340A12340A");
 			Assert.Equal(expected, actual);
 		}
-
-		private void DefineCSharpByteArray_ShouldReturnOddCharactersErrorGivenOddCharactersInSequence()
+		[Fact]
+		public void DefineCSharpByteArray__GivenOddCharactersInByteSequence_ReturnsError()
 		{
 			var expected = "The provided byte sequence has odd number of characters, which makes it invalid";
 			var actual = _sut.DefineCSharpByteArray("0A12340A1234E");
@@ -79,26 +77,10 @@ namespace ClipboardUtilities.Lib.Tests
 		}
 
 		[Fact]
-		public void DefineCSharpByteArray()
-		{
-			DefineCSharpByteArray_ShouldConvertsToByteArrayGivenValidInput();
-			DefineCSharpByteArray_ShouldConvertsToByteArrayGivenValidInput();
-			DefineCSharpByteArray_ShouldReturnOddCharactersErrorGivenOddCharactersInSequence();
-		}
-
-		[Fact]
 		public void ExtractPattern()
 		{
 			Test(new List<string> { @"\d+", "EmpId:123", "No matching pattern", "EmpId:456" },
 				new List<string> { "123", "", "456" }, _sut.ExtractPattern);
-		}
-
-		[Fact]
-		public void FormatXml()
-		{
-			FormatXmlWithXmlPrefix();
-			FormatInvalidXmlThrowsException();
-			FormatInvalidXml();
 		}
 
 		[Fact]
@@ -119,25 +101,18 @@ namespace ClipboardUtilities.Lib.Tests
 			// ReSharper restore StringLiteralTypo
 		}
 
-
-		[Fact(Skip = "Missing functionality: Bad elements in input set")]
-		public void IpAddressToHexNumberInvalidInput()
+		[Fact]
+		public void IpAddressToHexNumber_GivenInvalidInput_SkipsOverInvalidInput()
 		{
-			Test(new List<string> { "256.256.256.256" }, new List<string> { "Invalid 256.256.256.256" },
+			Test(new List<string> { "256.256.256.256" }, new List<string> { "Invalid: [256.256.256.256]. An invalid IP address was specified." },
 				_sut.IpAddressToHexNumber);
 		}
 
 		[Fact]
-		public void LogDateToSplunkDate()
-		{
-			Assert.Equal("\"01/20/2015:16:47:32\"", _sut.LogDateToSplunkDate("2015-01-20  16:47:32.777"));
-		}
+		public void LogDateToSplunkDate() => Assert.Equal("\"01/20/2015:16:47:32\"", _sut.LogDateToSplunkDate("2015-01-20  16:47:32.777"));
 
 		[Fact]
-		public void RemoveDuplicates()
-		{
-			Test(new List<string> { "abc", "abc", "xyz" }, new List<string> { "abc", "xyz" }, _sut.RemoveDuplicates);
-		}
+		public void RemoveDuplicates() => Test(new List<string> { "abc", "abc", "xyz" }, new List<string> { "abc", "xyz" }, _sut.RemoveDuplicates);
 
 		[Fact]
 		public void RemoveEmptyLines()
@@ -147,10 +122,7 @@ namespace ClipboardUtilities.Lib.Tests
 		}
 
 		[Fact]
-		public void Reverse()
-		{
-			Test(new List<string> { "abc", "pqr", "xyz" }, new List<string> { "xyz", "pqr", "abc" }, _sut.Reverse);
-		}
+		public void Reverse() => Test(new List<string> { "abc", "pqr", "xyz" }, new List<string> { "xyz", "pqr", "abc" }, _sut.Reverse);
 
 		[Fact]
 		public void Sort()
@@ -196,9 +168,8 @@ namespace ClipboardUtilities.Lib.Tests
 		}
 
 		[Fact]
-		public void TrimShouldTrimLeadingAndEndingWhitespaces()
+		public void Trim()
 		{
-			Assert.Equal("single line", _sut.Trim("\t\tsingle line "));
 			Assert.Equal("Line1\r\nLine2", _sut.Trim("\t\tLine1 \r\n  Line2  "));
 		}
 	}

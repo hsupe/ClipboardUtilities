@@ -4,29 +4,30 @@ using System.Linq;
 
 namespace ClipboardUtilities.UI
 {
+	//TODO Add Unit Tests
 	public class ActionCatalog
 	{
-		// ReSharper disable PrivateFieldCanBeConvertedToLocalVariable
-		private readonly object _actionImplementer;
-		// ReSharper restore PrivateFieldCanBeConvertedToLocalVariable
-
 		private Dictionary<string, ActionDelegate> _catalog;
 
 		private delegate string ActionDelegate(string input);
 
-		public ActionCatalog(object actionImplementer)
+		public void Add(Object actionImplementer)
 		{
-			_actionImplementer = actionImplementer;
-			BuildCatalog();
+			BuildCatalog(actionImplementer);
 		}
 
-		private void BuildCatalog()
+		private void BuildCatalog(object actionImplementer)
 		{
-			_catalog = new Dictionary<string, ActionDelegate>();
-			new ActionDiscoverer(_actionImplementer).Discover().ForEach(x => _catalog.Add(x, MakeDelegate(x)));
+			if(_catalog == null )
+				_catalog = new Dictionary<string, ActionDelegate>();
+
+			new ActionDiscoverer(actionImplementer)
+				.Discover()
+				.ForEach(x => _catalog.Add(x, MakeDelegate(x, actionImplementer)));
 		}
 
-		private ActionDelegate MakeDelegate(string x) => (ActionDelegate) Delegate.CreateDelegate(typeof(ActionDelegate), _actionImplementer, x);
+		private ActionDelegate MakeDelegate(string nameOfMethod, object actionImplementer) =>
+			(ActionDelegate) Delegate.CreateDelegate(typeof(ActionDelegate), actionImplementer, nameOfMethod);
 
 		public List<string> Actions() => _catalog.Keys.ToList();
 
