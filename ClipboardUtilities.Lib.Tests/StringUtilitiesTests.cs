@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FluentAssertions;
 using Xunit;
 
 namespace ClipboardUtilities.Lib.Tests
@@ -10,27 +11,28 @@ namespace ClipboardUtilities.Lib.Tests
 
 		private delegate string TestMethod(string input);
 
-		private void Test(IEnumerable<string> input, IEnumerable<string> expected, TestMethod method) => Assert.Equal(expected.JoinIntoString(), method(input.JoinIntoString()));
+		private void Test(IEnumerable<string> input, IEnumerable<string> expected, TestMethod method)
+		{
+			method(input.JoinIntoString()).Should().Be(expected.JoinIntoString());
+		}
 
 		[Fact]
-		public void FormatXml_GivenInvalidXml_ReturnsError() => Assert.Contains("System.Xml.XmlException", _sut.FormatXml("<Project"));
+		public void FormatXml_GivenInvalidXml_ReturnsError() => _sut.FormatXml("<Project").Should().Contain("System.Xml.XmlException");
 
 		[Fact]
 		public void FormatXml_GivenNoXmlPrefix_FormatsXml()
 		{
-			Assert.Equal(
-				"<Project>\r\n  <PropertyGroup>\r\n    <Configuration>Debug</Configuration>\r\n  </PropertyGroup>\r\n</Project>",
-				_sut.FormatXml(
-					"<Project> <PropertyGroup> <Configuration>Debug</Configuration> </PropertyGroup> </Project>"));
+			_sut.FormatXml(
+				"<Project> <PropertyGroup> <Configuration>Debug</Configuration> </PropertyGroup> </Project>").Should().Be(
+				"<Project>\r\n  <PropertyGroup>\r\n    <Configuration>Debug</Configuration>\r\n  </PropertyGroup>\r\n</Project>"
+				);
 		}
 
 		[Fact]
 		public void FormatXml_GivenXmlPrefix_FormatsXml()
 		{
-			Assert.Equal(
-				"<Project>\r\n  <PropertyGroup>\r\n    <Configuration>Debug</Configuration>\r\n  </PropertyGroup>\r\n</Project>",
-				_sut.FormatXml(
-					"xml=<Project> <PropertyGroup> <Configuration>Debug</Configuration> </PropertyGroup> </Project>"));
+			_sut.FormatXml(
+					"xml=<Project> <PropertyGroup> <Configuration>Debug</Configuration> </PropertyGroup> </Project>").Should().Be("<Project>\r\n  <PropertyGroup>\r\n    <Configuration>Debug</Configuration>\r\n  </PropertyGroup>\r\n</Project>");
 		}
 
 		[Fact]
@@ -38,14 +40,14 @@ namespace ClipboardUtilities.Lib.Tests
 		{
 			var expected = "byte[] arrayName = {\r\n0x0A, 0x12, 0x34, 0x0A, 0x12, 0x34, 0x0A\r\n};";
 			var actual = _sut.DefineCSharpByteArray("0A12340A12340A");
-			Assert.Equal(expected, actual);
+			actual.Should().Be(expected);
 		}
 		[Fact]
 		public void DefineCSharpByteArray__GivenOddCharactersInByteSequence_ReturnsError()
 		{
 			var expected = "The provided byte sequence has odd number of characters, which makes it invalid";
 			var actual = _sut.DefineCSharpByteArray("0A12340A1234E");
-			Assert.Contains(expected, actual);
+			actual.Should().Contain(expected);
 		}
 
 		[Fact]
@@ -109,7 +111,7 @@ namespace ClipboardUtilities.Lib.Tests
 		}
 
 		[Fact]
-		public void LogDateToSplunkDate() => Assert.Equal("\"01/20/2015:16:47:32\"", _sut.LogDateToSplunkDate("2015-01-20  16:47:32.777"));
+		public void LogDateToSplunkDate() => _sut.LogDateToSplunkDate("2015-01-20  16:47:32.777").Should().Be("\"01/20/2015:16:47:32\"");
 
 		[Fact]
 		public void RemoveDuplicates() => Test(new List<string> { "abc", "abc", "xyz" }, new List<string> { "abc", "xyz" }, _sut.RemoveDuplicates);
@@ -135,29 +137,26 @@ namespace ClipboardUtilities.Lib.Tests
 		public void ToSingleToLine()
 		{
 			// ReSharper disable StringLiteralTypo
-			Assert.Equal("Jira-1234 Fix the crash", _sut.ToSingleToLine("Jira-1234\r\nFix the crash"));
+			_sut.ToSingleToLine("Jira-1234\r\nFix the crash").Should().Be("Jira-1234 Fix the crash");
 			// ReSharper restore StringLiteralTypo
 		}
 
 		[Fact]
 		public void ToSplunkOr()
 		{
-			Assert.Equal("( 1 OR 2 OR 3 )",
-				_sut.ToSplunkOr(new List<string> { "1", "2", "3" }.JoinIntoString()));
+			_sut.ToSplunkOr(new List<string> {"1", "2", "3"}.JoinIntoString()).Should().Be("( 1 OR 2 OR 3 )");
 		}
 
 		[Fact]
 		public void ToSqlInList()
 		{
-			Assert.Equal("( 1, 2, 3 )",
-				_sut.ToSqlInList(new List<string> { "1", "2", "3" }.JoinIntoString()));
+			_sut.ToSqlInList(new List<string> {"1", "2", "3"}.JoinIntoString()).Should().Be("( 1, 2, 3 )");
 		}
 
 		[Fact]
 		public void ToSqlInListQuoted()
 		{
-			Assert.Equal("( '1', '2', '3' )",
-				_sut.ToSqlInListQuoted(new List<string> { "1", "2", "3" }.JoinIntoString()));
+			_sut.ToSqlInListQuoted(new List<string> {"1", "2", "3"}.JoinIntoString()).Should().Be("( '1', '2', '3' )");
 		}
 
 		[Fact]
@@ -170,7 +169,7 @@ namespace ClipboardUtilities.Lib.Tests
 		[Fact]
 		public void Trim()
 		{
-			Assert.Equal("Line1\r\nLine2", _sut.Trim("\t\tLine1 \r\n  Line2  "));
+			_sut.Trim("\t\tLine1 \r\n  Line2  ").Should().Be("Line1\r\nLine2");
 		}
 	}
 
