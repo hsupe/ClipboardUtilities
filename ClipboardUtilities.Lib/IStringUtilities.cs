@@ -22,5 +22,6 @@
 		string ToSingleToLine(string input);
 		string ToSqlSelectAs(string input);
 		string AssignValuesToVariables(string input);
-	}
+        string ConvertPathFromWindowsToWsl(string input);
+    }
 }

@@ -1,7 +1,7 @@
-pskill -t ClipboardUtilities.UI.exe
+C:\Data\Tools\SysinternalsSuite\pskill -t ClipboardUtilities.UI.exe
 
-copy "D:\S\depot\depot\Users\hsupe\ClipboardUtilities.UI\ClipboardUtilities.UI\bin\Release\*.*" "D:\Data\Tools\ClipboardUtilities.UI" /y
+copy ".\bin\Release\*.*" "C:\Data\Tools\ClipboardUtilities.UI" /y
 
-"D:\Data\Tools\Quick Launch\ClipboardUtilities.UI.exe.lnk"
+"C:\Data\Tools\ClipboardUtilities.UI\ClipboardUtilities.UI.exe"
 
 pause
