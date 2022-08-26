@@ -171,6 +171,13 @@ namespace ClipboardUtilities.Lib.Tests
 		{
 			_sut.Trim("\t\tLine1 \r\n  Line2  ").Should().Be("Line1\r\nLine2");
 		}
+        
+        [Fact]
+        public void ConvertPathFromWindowsToWsl()
+        {
+            _sut.ConvertPathFromWindowsToWsl(@"C:\Program Files\SomeFile.exe").Should().Be(@"/mnt/c/Program\ Files/SomeFile.exe");
+        }
+
 	}
 
 	internal static class ExtensionMethods

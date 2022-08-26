@@ -223,5 +223,16 @@ namespace ClipboardUtilities.Lib
 				.Select(x => Convert.ToByte(hexSequence.Substring(x, 2), 16))
 				.ToArray();
 		}
+		public string ConvertPathFromWindowsToWsl(string input)
+        {
+
+            return @"/mnt/"
+                   + new string(input.Take(1).ToArray()).ToLower() 
+                   + new string(input.Skip(1).ToArray())
+                       .Replace(@"\", "/")
+					   .Replace(" ", @"\ ")
+					   .Replace(":", "");
+
+        }
 	}
 }
