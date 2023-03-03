@@ -192,7 +192,7 @@ namespace ClipboardUtilities.Lib
 				.ToSingleLine();
 		}
 
-		public string ToSingleToLine(string input)
+		public string ToSingleLine(string input)
 		{
 			return input.ToSingleLine();
 		}
@@ -236,3 +236,8 @@ namespace ClipboardUtilities.Lib
         }
 	}
 }
+// mnt / c / Data / Assignments / 405.\ PPTS - 1109\ Balance\ Service
+// TODO generate exec sp_helptext
+// TODO Fix sp_helptext results
+// TODO Make sp/function debagable.
+// TODO convert tabs to spaces

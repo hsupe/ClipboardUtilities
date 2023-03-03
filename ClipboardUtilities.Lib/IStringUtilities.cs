@@ -19,7 +19,7 @@
 		string DefineCSharpByteArray(string hexSequence);
 		string RemoveEmptyLines(string input);
 		string ToSplunkOr(string input);
-		string ToSingleToLine(string input);
+		string ToSingleLine(string input);
 		string ToSqlSelectAs(string input);
 		string AssignValuesToVariables(string input);
         string ConvertPathFromWindowsToWsl(string input);

@@ -137,7 +137,7 @@ namespace ClipboardUtilities.Lib.Tests
 		public void ToSingleToLine()
 		{
 			// ReSharper disable StringLiteralTypo
-			_sut.ToSingleToLine("Jira-1234\r\nFix the crash").Should().Be("Jira-1234 Fix the crash");
+			_sut.ToSingleLine("Jira-1234\r\nFix the crash").Should().Be("Jira-1234 Fix the crash");
 			// ReSharper restore StringLiteralTypo
 		}
 
