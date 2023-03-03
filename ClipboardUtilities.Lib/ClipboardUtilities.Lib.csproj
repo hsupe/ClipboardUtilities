@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FunctionExtensions.cs" />
     <Compile Include="StringUtilities.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="IStringUtilities.cs" />
