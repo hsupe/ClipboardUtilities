@@ -5,7 +5,7 @@ using Xunit;
 
 namespace ClipboardUtilities.Lib.Tests
 {
-	public class StringUtilitiesTests
+    public class StringUtilitiesTests
 	{
 		private readonly IStringUtilities _sut = new StringUtilities();
 

@@ -8,6 +8,18 @@ using System.Xml.Linq;
 
 namespace ClipboardUtilities.Lib
 {
+    public delegate string ActionDelegate(string input);
+
+	public class MyClass
+    {
+        public string Invoke(ActionDelegate actionDelegate, string input)
+        {
+            var cleaned = input.Trim();
+            var result = actionDelegate(cleaned);
+            return result.Trim();
+        }
+    }
+
 	public class StringUtilities : IStringUtilities
 	{
 		public string Trim(string input)

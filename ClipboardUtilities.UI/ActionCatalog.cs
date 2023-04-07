@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ClipboardUtilities.Lib;
 
 namespace ClipboardUtilities.UI
 {
@@ -9,9 +10,7 @@ namespace ClipboardUtilities.UI
 	{
 		private Dictionary<string, ActionDelegate> _catalog;
 
-		private delegate string ActionDelegate(string input);
-
-		public void Add(Object actionImplementer)
+        public void Add(Object actionImplementer)
 		{
 			BuildCatalog(actionImplementer);
 		}
@@ -31,6 +30,9 @@ namespace ClipboardUtilities.UI
 
 		public List<string> Actions() => _catalog.Keys.ToList();
 
-		public string InvokeAction(string nameOfAction, string input) => _catalog[nameOfAction](input);
-	}
+		public string InvokeAction(string nameOfAction, string input)
+        {
+            return new MyClass().Invoke(_catalog[nameOfAction], input);
+        }
+    }
 }
