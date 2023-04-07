@@ -75,7 +75,6 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="ExtensionMethodsTests.cs" />
     <Compile Include="StringUtilitiesTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

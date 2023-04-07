@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace ClipboardUtilities.Lib
 {
-	public static class ExtensionMethods // TODO Change to internal.
+	static class ExtensionMethods
 	{
 		public static string[] SplitInputIntoLines(this string input)
 		{

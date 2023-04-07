@@ -32,7 +32,7 @@ namespace ClipboardUtilities.UI
 
 		public string InvokeAction(string nameOfAction, string input)
         {
-            return new MyClass().Invoke(_catalog[nameOfAction], input);
+            return new Preprocess().Invoke(_catalog[nameOfAction], input);
         }
     }
 }
