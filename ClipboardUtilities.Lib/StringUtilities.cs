@@ -8,7 +8,9 @@ using System.Xml.Linq;
 
 namespace ClipboardUtilities.Lib
 {
-	public class StringUtilities : IStringUtilities
+    public delegate string ActionDelegate(string input);
+
+    public class StringUtilities : IStringUtilities
 	{
 		public string Trim(string input)
 		{
@@ -192,7 +194,7 @@ namespace ClipboardUtilities.Lib
 				.ToSingleLine();
 		}
 
-		public string ToSingleToLine(string input)
+		public string ToSingleLine(string input)
 		{
 			return input.ToSingleLine();
 		}
@@ -223,5 +225,21 @@ namespace ClipboardUtilities.Lib
 				.Select(x => Convert.ToByte(hexSequence.Substring(x, 2), 16))
 				.ToArray();
 		}
+		public string ConvertPathFromWindowsToWsl(string input)
+        {
+
+            return @"/mnt/"
+                   + new string(input.Take(1).ToArray()).ToLower() 
+                   + new string(input.Skip(1).ToArray())
+                       .Replace(@"\", "/")
+					   .Replace(" ", @"\ ")
+					   .Replace(":", "");
+
+        }
 	}
 }
+// mnt / c / Data / Assignments / 405.\ PPTS - 1109\ Balance\ Service
+// TODO generate exec sp_helptext
+// TODO Fix sp_helptext results
+// TODO Make sp/function debagable.
+// TODO convert tabs to spaces

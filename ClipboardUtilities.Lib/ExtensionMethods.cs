@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace ClipboardUtilities.Lib
 {
-	internal static class ExtensionMethods
+	static class ExtensionMethods
 	{
 		public static string[] SplitInputIntoLines(this string input)
 		{
@@ -40,17 +40,19 @@ namespace ClipboardUtilities.Lib
 
 		public static string ReplaceUsingRegEx(this string input, string pattern, string replacement,
 			RegexOptions options = RegexOptions.None)
-		{
+        {
+            options |= RegexOptions.Multiline;
 			return Regex.Replace(input, pattern, replacement, options);
 		}
 
 		public static string RemoveTrailing(this string input, string pattern)
-		{
-			return input
-				.TrimEnd()
+        {
+            return input
+                .Trim()
+                .TrimEnd(' ', '\r', '\n')
 				.ReplaceUsingRegEx(pattern + "$", string.Empty, RegexOptions.IgnoreCase)
-				.TrimEnd();
-		}
+                .TrimEnd(' ', '\r', '\n');
+        }
 
 		public static string RemoveLeading(this string input, string pattern)
 		{
