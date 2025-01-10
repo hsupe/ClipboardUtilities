@@ -1,7 +1,7 @@
-C:\Data\Tools\SysinternalsSuite\pskill -t ClipboardUtilities.UI.exe
+"C:\D\P\DevBoxSetup\Tools\pskill.exe" -t ClipboardUtilities.UI.exe
 
-copy ".\bin\Release\*.*" "C:\Data\Tools\ClipboardUtilities.UI" /y
+copy ".\bin\Release\net9.0-windows\*.*" "C:\D\P\DevBoxSetup\Tools\ClipboardUtilities.UI" /y
 
-"C:\Data\Tools\ClipboardUtilities.UI\ClipboardUtilities.UI.exe"
+"C:\D\P\DevBoxSetup\Tools\ClipboardUtilities.UI\ClipboardUtilities.UI.exe"
 
 pause

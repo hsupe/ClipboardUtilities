@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
+//using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text.RegularExpressions;
 
 namespace ClipboardUtilities.Lib
@@ -43,8 +43,10 @@ namespace ClipboardUtilities.Lib
 		private byte[] HexStringToByteArray(string hexString)
 		{
 			hexString = Regex.Replace(hexString, "0x", string.Empty, RegexOptions.IgnoreCase);
-			var shb = SoapHexBinary.Parse(hexString);
-			return shb.Value;
+
+			//var shb = SoapHexBinary.Parse(hexString); // TODO Fix this.
+			//return shb.Value;
+			return new byte[0];
 		}
 	}
 }
