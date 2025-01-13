@@ -25,7 +25,13 @@ public class StringUtilitiesTests
 	{
 		_sut.FormatXml(
 			"<Project> <PropertyGroup> <Configuration>Debug</Configuration> </PropertyGroup> </Project>").Should().Be(
-			"<Project>\r\n  <PropertyGroup>\r\n    <Configuration>Debug</Configuration>\r\n  </PropertyGroup>\r\n</Project>"
+			"""
+			<Project>
+			  <PropertyGroup>
+			    <Configuration>Debug</Configuration>
+			  </PropertyGroup>
+			</Project>
+			"""
 		);
 	}
 
@@ -36,13 +42,23 @@ public class StringUtilitiesTests
 				"xml=<Project> <PropertyGroup> <Configuration>Debug</Configuration> </PropertyGroup> </Project>")
 			.Should()
 			.Be(
-				"<Project>\r\n  <PropertyGroup>\r\n    <Configuration>Debug</Configuration>\r\n  </PropertyGroup>\r\n</Project>");
+				"""
+				<Project>
+				  <PropertyGroup>
+				    <Configuration>Debug</Configuration>
+				  </PropertyGroup>
+				</Project>
+				""");
 	}
 
 	[Fact]
 	public void DefineCSharpByteArray_GivenValidInput_ConvertsToByteArray()
 	{
-		var expected = "byte[] arrayName = {\r\n0x0A, 0x12, 0x34, 0x0A, 0x12, 0x34, 0x0A\r\n};";
+		var expected = """
+		               byte[] arrayName = {
+		               0x0A, 0x12, 0x34, 0x0A, 0x12, 0x34, 0x0A
+		               };
+		               """;
 		var actual = _sut.DefineCSharpByteArray("0A12340A12340A");
 		actual.Should().Be(expected);
 	}
@@ -152,7 +168,10 @@ public class StringUtilitiesTests
 	public void ToSingleToLine()
 	{
 		// ReSharper disable StringLiteralTypo
-		_sut.ToSingleLine("Jira-1234\r\nFix the crash").Should().Be("Jira-1234 Fix the crash");
+		_sut.ToSingleLine("""
+		                  Jira-1234
+		                  Fix the crash
+		                  """).Should().Be("Jira-1234 Fix the crash");
 		// ReSharper restore StringLiteralTypo
 	}
 
