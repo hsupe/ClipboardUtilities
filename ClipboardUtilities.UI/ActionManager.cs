@@ -2,39 +2,41 @@
 using System.Linq;
 using System.Windows.Forms;
 
-namespace ClipboardUtilities.UI
+namespace ClipboardUtilities.UI;
+
+public class ActionManager
 {
-	public class ActionManager
+	private readonly ActionCatalog _catalog;
+
+	public ActionManager(ActionCatalog catalog)
 	{
-		private readonly ActionCatalog _catalog;
+		_catalog = catalog;
+	}
 
-		public ActionManager(ActionCatalog catalog) => _catalog = catalog;
+	public void BuildContextMenu(ContextMenuStrip contextMenuStrip)
+	{
+		contextMenuStrip.Items.Clear();
 
-		public void BuildContextMenu(ContextMenuStrip contextMenuStrip)
+		var toolStripItems = _catalog.Actions().Select(item => ToolStripMenuItemWithHandler(item, ItemHandler))
+			.Cast<ToolStripItem>().ToArray();
+		contextMenuStrip.Items.AddRange(toolStripItems);
+	}
+
+	private void ItemHandler(object sender, EventArgs e)
+	{
+		Clipboard.Text = _catalog.InvokeAction(GetMethod(), Clipboard.Text);
+
+		string GetMethod()
 		{
-			contextMenuStrip.Items.Clear();
-
-			var toolStripItems = _catalog.Actions().Select(item => ToolStripMenuItemWithHandler(item, ItemHandler))
-				.Cast<ToolStripItem>().ToArray();
-			contextMenuStrip.Items.AddRange(toolStripItems);
+			return ((ToolStripItem.ToolStripItemAccessibleObject)((ToolStripItem)sender).AccessibilityObject).Name;
 		}
+	}
 
-		private void ItemHandler(object sender, EventArgs e)
-		{
-			Clipboard.Text = _catalog.InvokeAction(GetMethod(), Clipboard.Text);
+	public ToolStripMenuItem ToolStripMenuItemWithHandler(string displayText, EventHandler eventHandler)
+	{
+		var item = new ToolStripMenuItem(displayText);
+		if (eventHandler != null) item.Click += eventHandler;
 
-			string GetMethod() => ((ToolStripItem.ToolStripItemAccessibleObject) ((ToolStripItem) sender).AccessibilityObject).Name;
-		}
-
-		public ToolStripMenuItem ToolStripMenuItemWithHandler(string displayText, EventHandler eventHandler)
-		{
-			var item = new ToolStripMenuItem(displayText);
-			if (eventHandler != null)
-			{
-				item.Click += eventHandler;
-			}
-
-			return item;
-		}
+		return item;
 	}
 }

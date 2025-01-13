@@ -2,32 +2,40 @@
 using System.Linq;
 using System.Reflection;
 
-namespace ClipboardUtilities.UI
+namespace ClipboardUtilities.UI;
+
+internal class ActionDiscoverer
 {
-	class ActionDiscoverer
+	private readonly object _actionImplementer;
+
+	public ActionDiscoverer(object actionImplementer)
 	{
-		private readonly object _actionImplementer;
+		_actionImplementer = actionImplementer;
+	}
 
-		public ActionDiscoverer(object actionImplementer) => _actionImplementer = actionImplementer;
+	public List<string> Discover()
+	{
+		var publicMethods = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
-		public List<string> Discover()
-		{
-			var publicMethods = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+		return _actionImplementer.GetType()
+			.GetMethods(publicMethods)
+			.Where(MethodTakesStringAndReturnsString)
+			.Select(x => x.Name).ToList();
+	}
 
-			return _actionImplementer.GetType()
-				.GetMethods(publicMethods)
-				.Where(MethodTakesStringAndReturnsString)
-				.Select(x => x.Name).ToList();
-		}
+	private static bool MethodTakesStringAndReturnsString(MethodInfo m)
+	{
+		return MethodTakesOnlyStringParameter(m) && MethodReturnsString(m);
+	}
 
-		private static bool MethodTakesStringAndReturnsString(MethodInfo m) => MethodTakesOnlyStringParameter(m) && MethodReturnsString(m);
+	private static bool MethodReturnsString(MethodInfo m)
+	{
+		return m.ReturnType == typeof(string);
+	}
 
-		private static bool MethodReturnsString(MethodInfo m) => (m.ReturnType == typeof(string));
-
-		private static bool MethodTakesOnlyStringParameter(MethodInfo m)
-		{
-			var parameters = m.GetParameters();
-			return parameters.Length == 1 && parameters.First().ParameterType == typeof(string);
-		}
+	private static bool MethodTakesOnlyStringParameter(MethodInfo m)
+	{
+		var parameters = m.GetParameters();
+		return parameters.Length == 1 && parameters.First().ParameterType == typeof(string);
 	}
 }

@@ -3,36 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using ClipboardUtilities.Lib;
 
-namespace ClipboardUtilities.UI
+namespace ClipboardUtilities.UI;
+
+//TODO Add Unit Tests
+public class ActionCatalog
 {
-	//TODO Add Unit Tests
-	public class ActionCatalog
+	private Dictionary<string, ActionDelegate> _catalog;
+
+	public void Add(object actionImplementer)
 	{
-		private Dictionary<string, ActionDelegate> _catalog;
+		BuildCatalog(actionImplementer);
+	}
 
-        public void Add(Object actionImplementer)
-		{
-			BuildCatalog(actionImplementer);
-		}
+	private void BuildCatalog(object actionImplementer)
+	{
+		if (_catalog == null)
+			_catalog = new Dictionary<string, ActionDelegate>();
 
-		private void BuildCatalog(object actionImplementer)
-		{
-			if(_catalog == null )
-				_catalog = new Dictionary<string, ActionDelegate>();
+		new ActionDiscoverer(actionImplementer)
+			.Discover()
+			.ForEach(x => _catalog.Add(x, MakeDelegate(x, actionImplementer)));
+	}
 
-			new ActionDiscoverer(actionImplementer)
-				.Discover()
-				.ForEach(x => _catalog.Add(x, MakeDelegate(x, actionImplementer)));
-		}
+	private ActionDelegate MakeDelegate(string nameOfMethod, object actionImplementer)
+	{
+		return (ActionDelegate)Delegate.CreateDelegate(typeof(ActionDelegate), actionImplementer, nameOfMethod);
+	}
 
-		private ActionDelegate MakeDelegate(string nameOfMethod, object actionImplementer) =>
-			(ActionDelegate) Delegate.CreateDelegate(typeof(ActionDelegate), actionImplementer, nameOfMethod);
+	public List<string> Actions()
+	{
+		return _catalog.Keys.ToList();
+	}
 
-		public List<string> Actions() => _catalog.Keys.ToList();
-
-		public string InvokeAction(string nameOfAction, string input)
-        {
-            return new Preprocess().Invoke(_catalog[nameOfAction], input);
-        }
-    }
+	public string InvokeAction(string nameOfAction, string input)
+	{
+		return new Preprocess().Invoke(_catalog[nameOfAction], input);
+	}
 }

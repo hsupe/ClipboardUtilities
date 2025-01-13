@@ -2,43 +2,56 @@
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace ClipboardUtilities.Lib
+namespace ClipboardUtilities.Lib;
+
+public class Sql
 {
-	public class Sql
+	public string AssignValuesToVariables(string input)
 	{
-		public string AssignValuesToVariables(string input)
-		{
-			if (string.IsNullOrEmpty(input))
-				return input;
+		if (string.IsNullOrEmpty(input))
+			return input;
 
-			input = input.Replace(Environment.NewLine, "\n");
+		input = input.Replace(Environment.NewLine, "\n");
 
-			var lines = input.Split('\n');
-			var variables = lines[0].Split('\t');
-			var values = lines[1].Split('\t');
+		var lines = input.Split('\n');
+		var variables = lines[0].Split('\t');
+		var values = lines[1].Split('\t');
 
-			var sb = new StringBuilder();
+		var sb = new StringBuilder();
 
-			for (var i = 0; i < variables.Length; i++)
-			{
-				sb.AppendLine(IsNumberOrNull(values[i])
-					? $"\t{variables[i]} = {values[i]},"
-					: $"\t{variables[i]} = '{values[i]}',");
-			}
+		for (var i = 0; i < variables.Length; i++)
+			sb.AppendLine(IsNumberOrNull(values[i])
+				? $"\t{variables[i]} = {values[i]},"
+				: $"\t{variables[i]} = '{values[i]}',");
 
-			var output = ConvertTabsTo4Spaces("select " + Environment.NewLine + sb.ToString().TrimEnd().TrimEnd(','));
-			return AlignOnAssignmentOperator(output);
-		}
+		var output = ConvertTabsTo4Spaces("select " + Environment.NewLine + sb.ToString().TrimEnd().TrimEnd(','));
+		return AlignOnAssignmentOperator(output);
+	}
 
-		private static bool IsNumberOrNull(string input) => IsNumber(input) || IsNullConstant(input);
+	private static bool IsNumberOrNull(string input)
+	{
+		return IsNumber(input) || IsNullConstant(input);
+	}
 
-		private static bool IsNumber(string input) =>
-			Regex.IsMatch(input, @"^-?[0-9\.]+")
-			&& !input.Contains(":"); //// TODO can this : be handled in regex? Does it exclude dates? Is it even needed - seems like the number regular expression is sufficient?
-                            
-		private static bool IsNullConstant(string input) => String.Compare(input.Trim(), "null", StringComparison.OrdinalIgnoreCase) == 0;
+	private static bool IsNumber(string input)
+	{
+		return Regex.IsMatch(input, @"^-?[0-9\.]+")
+		       && !input.Contains(":");
+		//// TODO can this : be handled in regex? Does it exclude dates? Is it even needed - seems like the number regular expression is sufficient?
+	}
 
-		private static string ConvertTabsTo4Spaces(string input) => new TabToSpacesConvertor(4).Convert(input);
-		private static string AlignOnAssignmentOperator(string output) => new TextAligner(output, "=").Align();
+	private static bool IsNullConstant(string input)
+	{
+		return string.Compare(input.Trim(), "null", StringComparison.OrdinalIgnoreCase) == 0;
+	}
+
+	private static string ConvertTabsTo4Spaces(string input)
+	{
+		return new TabToSpacesConvertor(4).Convert(input);
+	}
+
+	private static string AlignOnAssignmentOperator(string output)
+	{
+		return new TextAligner(output, "=").Align();
 	}
 }

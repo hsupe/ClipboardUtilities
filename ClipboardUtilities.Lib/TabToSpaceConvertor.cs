@@ -1,69 +1,81 @@
 ﻿// This code is borrowed from my another repository: https://raw.githubusercontent.com/hlsupe/TabToSpacesConvertor/master/TabToSpacesConvertor/TabToSpacesConvertor.cs
+
 using System.Text;
 
-namespace ClipboardUtilities.Lib
+namespace ClipboardUtilities.Lib;
+
+public class TabToSpacesConvertor
 {
-	public class TabToSpacesConvertor
+	public TabToSpacesConvertor(int tabLength)
 	{
-		public TabToSpacesConvertor(int tabLength) => TabLength = tabLength;
+		TabLength = tabLength;
+	}
 
-		public string Convert(string input)
-		{
-			if (string.IsNullOrEmpty(input))
-				return input;
+	private int TabLength { get; }
 
-			StringBuilder output = new StringBuilder();
-			int positionInOutput = 1;
-			foreach (char c in input)
-				switch (c)
-				{
-					case '\t':
-						positionInOutput = ReplaceTabBySpaces(positionInOutput, output);
-						break;
+	public string Convert(string input)
+	{
+		if (string.IsNullOrEmpty(input))
+			return input;
 
-					case '\n':
-						output.Append(c);
-						positionInOutput = 1;
-						break;
-
-					default:
-						output.Append(c);
-						positionInOutput++;
-						break;
-				}
-
-			return output.ToString();
-		}
-
-		private int ReplaceTabBySpaces(int positionInOutput, StringBuilder output)
-		{
-			int spacesToAdd = NumberOfSpacesToTabStop(positionInOutput) - positionInOutput;
-			output.Append(RepeatSpaces(spacesToAdd));
-			positionInOutput += spacesToAdd;
-			return positionInOutput;
-		}
-
-		private int NumberOfSpacesToTabStop(int currentPosition)
-		{
-			if (AtTabStop(currentPosition))
-				return GetNextTabStop(currentPosition);
-			return GetNearestTabStop(currentPosition);
-		}
-
-		private bool AtTabStop(int currentPosition) => currentPosition % TabLength == 1;
-
-		private int GetNextTabStop(int currentPosition) => currentPosition + TabLength;
-
-		private int GetNearestTabStop(int currentPosition)
-		{
-			for (int i = 0; i < TabLength; i++, currentPosition++)
-				if (AtTabStop(currentPosition))
+		var output = new StringBuilder();
+		var positionInOutput = 1;
+		foreach (var c in input)
+			switch (c)
+			{
+				case '\t':
+					positionInOutput = ReplaceTabBySpaces(positionInOutput, output);
 					break;
-			return currentPosition;
-		}
 
-		private string RepeatSpaces(int spacesToAdd) => new string(' ', spacesToAdd);
+				case '\n':
+					output.Append(c);
+					positionInOutput = 1;
+					break;
 
-		private int TabLength { get; }
+				default:
+					output.Append(c);
+					positionInOutput++;
+					break;
+			}
+
+		return output.ToString();
+	}
+
+	private int ReplaceTabBySpaces(int positionInOutput, StringBuilder output)
+	{
+		var spacesToAdd = NumberOfSpacesToTabStop(positionInOutput) - positionInOutput;
+		output.Append(RepeatSpaces(spacesToAdd));
+		positionInOutput += spacesToAdd;
+		return positionInOutput;
+	}
+
+	private int NumberOfSpacesToTabStop(int currentPosition)
+	{
+		if (AtTabStop(currentPosition))
+			return GetNextTabStop(currentPosition);
+		return GetNearestTabStop(currentPosition);
+	}
+
+	private bool AtTabStop(int currentPosition)
+	{
+		return currentPosition % TabLength == 1;
+	}
+
+	private int GetNextTabStop(int currentPosition)
+	{
+		return currentPosition + TabLength;
+	}
+
+	private int GetNearestTabStop(int currentPosition)
+	{
+		for (var i = 0; i < TabLength; i++, currentPosition++)
+			if (AtTabStop(currentPosition))
+				break;
+		return currentPosition;
+	}
+
+	private string RepeatSpaces(int spacesToAdd)
+	{
+		return new string(' ', spacesToAdd);
 	}
 }

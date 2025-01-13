@@ -6,236 +6,234 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
-namespace ClipboardUtilities.Lib
+namespace ClipboardUtilities.Lib;
+
+public delegate string ActionDelegate(string input);
+
+public class StringUtilities : IStringUtilities
 {
-    public delegate string ActionDelegate(string input);
-
-    public class StringUtilities : IStringUtilities
+	public string Trim(string input)
 	{
-		public string Trim(string input)
-		{
-			return Iterator(input, x => x.Trim());
-		}
+		return Iterator(input, x => x.Trim());
+	}
 
-		private string Iterator(string input, Func<string, string> operation)
-		{
-			return input.SplitInputIntoLines()
-				.Select(x => SkipOverBadInput(x, operation))
-				.ToMultiLineString();
+	public string Sort(string input)
+	{
+		return input.SplitInputIntoLines()
+			.OrderBy(x => x)
+			.ToMultiLineString();
+	}
 
-		}
+	public string Reverse(string input)
+	{
+		return input.SplitInputIntoLines()
+			.Reverse()
+			.ToMultiLineString();
+	}
 
-		private string SkipOverBadInput(string x, Func<string, string> operation)
-		{
-			try
-			{
-				return operation.Invoke(x);
-			}
-			catch (Exception e)
-			{
-				return $"Invalid: [{x}]. {e.Message}";
-			}
-		}
+	public string RemoveDuplicates(string input)
+	{
+		return input.SplitInputIntoLines()
+			.Distinct()
+			.ToMultiLineString();
+	}
 
-		public string Sort(string input)
-		{
-			return input.SplitInputIntoLines()
-				.OrderBy(x => x)
-				.ToMultiLineString();
-		}
+	public string ConvertDecimalTo8BytesLowercaseHex(string input)
+	{
+		return input.SplitInputIntoLines()
+			.Select(x => $"{long.Parse(x):x8}")
+			.ToMultiLineString();
+	}
 
-		public string Reverse(string input)
-		{
-			return input.SplitInputIntoLines()
-				.Reverse()
-				.ToMultiLineString();
-		}
+	public string ConvertHexToDecimal(string input)
+	{
+		return Iterator(input, x => $"{Convert.ToUInt64(x, 16)}");
+	}
 
-		public string RemoveDuplicates(string input)
-		{
-			return input.SplitInputIntoLines()
-				.Distinct()
-				.ToMultiLineString();
-		}
+	public string ToSqlInList(string input)
+	{
+		return ToSqlInList(input, false);
+	}
 
-		public string ConvertDecimalTo8BytesLowercaseHex(string input)
-		{
-			return input.SplitInputIntoLines()
-				.Select(x => $"{long.Parse(x):x8}")
-				.ToMultiLineString();
-		}
+	public string ToSqlInListQuoted(string input)
+	{
+		return ToSqlInList(input, true);
+	}
 
-		public string ConvertHexToDecimal(string input)
-		{
-			return Iterator(input, x => $"{Convert.ToUInt64(x, 16)}");
-		}
+	public string IpAddressToHexNumber(string input)
+	{
+		return Iterator(input, x => new IpAddress().ToHexNumberAsString(x));
+	}
 
-		private string ToSqlInList(string input, bool includeValuesInQuotes)
-		{
-			var pattern = includeValuesInQuotes ? "'$$VAL$$'," : "$$VAL$$,";
-			input = pattern + Environment.NewLine + input;
-			return ApplyPattern(input)
-				.RemoveTrailing(",")
-				.SurroundWith("(", ")")
-				.ToSingleLine();
-		}
+	public string HexToIpAddress(string input)
+	{
+		return Iterator(input, x => new IpAddress().ToString(x));
+	}
 
-		public string ToSqlInList(string input)
-		{
-			return ToSqlInList(input, false);
-		}
-		public string ToSqlInListQuoted(string input)
-		{
-			return ToSqlInList(input, true);
-		}
+	public string ApplyPattern(string input)
+	{
+		IEnumerable<string> lines = input.SplitInputIntoLines();
+		var pattern = lines.First();
+		return lines.Skip(1)
+			.Select(x => pattern.Replace("$$VAL$$", x))
+			.ToMultiLineString();
+	}
 
-		public string IpAddressToHexNumber(string input)
-		{
-			return Iterator(input, x => new IpAddress().ToHexNumberAsString(x));
-		}
-
-		public string HexToIpAddress(string input)
-		{
-			return Iterator(input, x => new IpAddress().ToString(x));
-		}
-
-		public string ApplyPattern(string input)
-		{
-			IEnumerable<string> lines = input.SplitInputIntoLines();
-			var pattern = lines.First();
-			return lines.Skip(1)
-				.Select(x => pattern.Replace("$$VAL$$", x))
-				.ToMultiLineString();
-		}
-
-		public string ExtractPattern(string input)
-		{
-			IEnumerable<string> lines = input.SplitInputIntoLines();
-			var pattern = lines.First();
-			return lines.Skip(1)
-				.Select(x =>
-					{
-						var m = Regex.Match(x, pattern);
-						return m.Success ? m.Value : string.Empty;
-					}
-				)
-				.ToMultiLineString();
-		}
-
-		[SuppressMessage("ReSharper", "InconsistentNaming")]
-		public string LogDateToSplunkDate(string logDate)
-		{
-			var array = logDate.ToPlainTextSingleSpaceSingleLine().Split('-', ':', '.', ' ');
-			var Y = array[0];
-			var M = array[1];
-			var D = array[2];
-			var H = array[3];
-			var Min = array[4];
-			var S = array[5];
-			return $"\"{M}/{D}/{Y}:{H}:{Min}:{S}\"";
-		}
-
-		public string FormatXml(string input)
-		{
-			try
-			{
-				input = input.RemoveLeading("xml=");
-				return XDocument.Parse(input).ToString();
-			}
-			catch (Exception e)
-			{
-				return e.ToString();
-			}
-		}
-
-		public string DefineCSharpByteArray(string input)
-		{
-			try
-			{
-				var array = StringToByte(input);
-
-				if (array.Length == 0)
-					return string.Empty;
-
-				var sb = new StringBuilder();
-
-				var count = 0;
-				foreach (var b in array)
+	public string ExtractPattern(string input)
+	{
+		IEnumerable<string> lines = input.SplitInputIntoLines();
+		var pattern = lines.First();
+		return lines.Skip(1)
+			.Select(x =>
 				{
-					sb.Append($"0x{b:X2}, ");
-					count++;
-					if (count % 20 == 0)
-						sb.AppendLine();
+					var m = Regex.Match(x, pattern);
+					return m.Success ? m.Value : string.Empty;
 				}
+			)
+			.ToMultiLineString();
+	}
 
-				var arrayDefinition = sb.ToString()
-					.TrimEnd(',', ' ', '\r', '\n');
+	[SuppressMessage("ReSharper", "InconsistentNaming")]
+	public string LogDateToSplunkDate(string logDate)
+	{
+		var array = logDate.ToPlainTextSingleSpaceSingleLine().Split('-', ':', '.', ' ');
+		var Y = array[0];
+		var M = array[1];
+		var D = array[2];
+		var H = array[3];
+		var Min = array[4];
+		var S = array[5];
+		return $"\"{M}/{D}/{Y}:{H}:{Min}:{S}\"";
+	}
 
-				return string.Format("byte[] arrayName = {{{0}{1}{0}}};", Environment.NewLine, arrayDefinition);
-			}
-			catch (Exception ex)
+	public string FormatXml(string input)
+	{
+		try
+		{
+			input = input.RemoveLeading("xml=");
+			return XDocument.Parse(input).ToString();
+		}
+		catch (Exception e)
+		{
+			return e.ToString();
+		}
+	}
+
+	public string DefineCSharpByteArray(string input)
+	{
+		try
+		{
+			var array = StringToByte(input);
+
+			if (array.Length == 0)
+				return string.Empty;
+
+			var sb = new StringBuilder();
+
+			var count = 0;
+			foreach (var b in array)
 			{
-				return ex.ToString();
+				sb.Append($"0x{b:X2}, ");
+				count++;
+				if (count % 20 == 0)
+					sb.AppendLine();
 			}
-		}
 
-		public string RemoveEmptyLines(string input)
+			var arrayDefinition = sb.ToString()
+				.TrimEnd(',', ' ', '\r', '\n');
+
+			return string.Format("byte[] arrayName = {{{0}{1}{0}}};", Environment.NewLine, arrayDefinition);
+		}
+		catch (Exception ex)
 		{
-			return Regex.Replace(input, @"^\s+$[\r\n]*", string.Empty, RegexOptions.Multiline);
+			return ex.ToString();
 		}
+	}
 
-		public string ToSplunkOr(string input)
+	public string RemoveEmptyLines(string input)
+	{
+		return Regex.Replace(input, @"^\s+$[\r\n]*", string.Empty, RegexOptions.Multiline);
+	}
+
+	public string ToSplunkOr(string input)
+	{
+		var pattern = "$$VAL$$ OR";
+		input = pattern + Environment.NewLine + input;
+		return ApplyPattern(input)
+			.RemoveTrailing("OR")
+			.SurroundWith("(", ")")
+			.ToSingleLine();
+	}
+
+	public string ToSingleLine(string input)
+	{
+		return input.ToSingleLine();
+	}
+
+	public string ToSqlSelectAs(string input)
+	{
+		var pattern = "    $$VAL$$ as '$$VAL$$',";
+		input = pattern + Environment.NewLine + input;
+		return "select" + Environment.NewLine
+		                + ApplyPattern(input)
+			                .RemoveTrailing(",");
+	}
+
+	public string AssignValuesToVariables(string input)
+	{
+		return new Sql().AssignValuesToVariables(input);
+	}
+
+	public string ConvertPathFromWindowsToWsl(string input)
+	{
+		return @"/mnt/"
+		       + new string(input.Take(1).ToArray()).ToLower()
+		       + new string(input.Skip(1).ToArray())
+			       .Replace(@"\", "/")
+			       .Replace(" ", @"\ ")
+			       .Replace(":", "");
+	}
+
+	private string Iterator(string input, Func<string, string> operation)
+	{
+		return input.SplitInputIntoLines()
+			.Select(x => SkipOverBadInput(x, operation))
+			.ToMultiLineString();
+	}
+
+	private string SkipOverBadInput(string x, Func<string, string> operation)
+	{
+		try
 		{
-			var pattern = "$$VAL$$ OR";
-			input = pattern + Environment.NewLine + input;
-			return ApplyPattern(input)
-				.RemoveTrailing("OR")
-				.SurroundWith("(", ")")
-				.ToSingleLine();
+			return operation.Invoke(x);
 		}
-
-		public string ToSingleLine(string input)
+		catch (Exception e)
 		{
-			return input.ToSingleLine();
+			return $"Invalid: [{x}]. {e.Message}";
 		}
+	}
 
-		public string ToSqlSelectAs(string input)
-		{
-			var pattern = "    $$VAL$$ as '$$VAL$$',";
-			input = pattern + Environment.NewLine + input;
-			return "select" + Environment.NewLine
-			                + ApplyPattern(input)
-				                .RemoveTrailing(",");
-		}
+	private string ToSqlInList(string input, bool includeValuesInQuotes)
+	{
+		var pattern = includeValuesInQuotes ? "'$$VAL$$'," : "$$VAL$$,";
+		input = pattern + Environment.NewLine + input;
+		return ApplyPattern(input)
+			.RemoveTrailing(",")
+			.SurroundWith("(", ")")
+			.ToSingleLine();
+	}
 
-		public string AssignValuesToVariables(string input)
-		{
-			return new Sql().AssignValuesToVariables(input);
-		}
+	private static byte[] StringToByte(string hexSequence)
+	{
+		hexSequence = hexSequence.Trim().RemoveLeading("0x");
 
-		private static byte[] StringToByte(string hexSequence)
-		{
-			hexSequence = hexSequence.Trim().RemoveLeading("0x");
+		if (hexSequence.Length % 2 > 0)
+			throw new Exception("The provided byte sequence has odd number of characters, which makes it invalid");
 
-			if (hexSequence.Length % 2 > 0)
-				throw new Exception("The provided byte sequence has odd number of characters, which makes it invalid");
-
-			return Enumerable.Range(0, hexSequence.Length)
-				.Where(x => x % 2 == 0)
-				.Select(x => Convert.ToByte(hexSequence.Substring(x, 2), 16))
-				.ToArray();
-		}
-		public string ConvertPathFromWindowsToWsl(string input)
-        {
-
-            return @"/mnt/"
-                   + new string(input.Take(1).ToArray()).ToLower() 
-                   + new string(input.Skip(1).ToArray())
-                       .Replace(@"\", "/")
-					   .Replace(" ", @"\ ")
-					   .Replace(":", "");
-
-        }
+		return Enumerable.Range(0, hexSequence.Length)
+			.Where(x => x % 2 == 0)
+			.Select(x => Convert.ToByte(hexSequence.Substring(x, 2), 16))
+			.ToArray();
 	}
 }
 // mnt / c / Data / Assignments / 405.\ PPTS - 1109\ Balance\ Service
